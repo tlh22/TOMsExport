@@ -35,11 +35,10 @@ from qgis.utils import iface
 import math
 from cmath import rect, phase
 
-class generateGeometryUtils:
+class generateGeometryUtils2:
     # https://gis.stackexchange.com/questions/95528/produce-line-from-components-length-and-angle?noredirect=1&lq=1
     # direction cosines function
 
-    @staticmethod
     def cosdir_azim(azim):
         az = math.radians(azim)
         cosa = math.sin(az)
@@ -52,7 +51,6 @@ class generateGeometryUtils:
         cosb = math.cos(az)
         return cosa, cosb
 
-    @staticmethod
     def turnToCL(Az1, Az2):
         # function to determine direction of turn to road centre    *** needs to be checked carefully ***
         # Az1 = Az of current line; Az2 = Az to roadCentreline
@@ -86,7 +84,6 @@ class generateGeometryUtils:
 
         return Turn
 
-    @staticmethod
     def calcBisector(prevAz, currAz, Turn, WidthRest):
         # function to return Az of bisector
 
@@ -122,7 +119,6 @@ class generateGeometryUtils:
 
         return bisectAz, distToPt
 
-    @staticmethod
     def checkDegrees(Az):
         newAz = Az
 
@@ -383,7 +379,6 @@ class generateGeometryUtils:
 
         return None
 
-    @staticmethod
     def getRestrictionGeometry(feature):
         # Function to control creation of geometry for any restriction
         QgsMessageLog.logMessage("In getRestrictionGeometry: " + str(feature.attribute("GeometryID")), tag="TOMs panel")
@@ -517,35 +512,18 @@ class generateGeometryUtils:
 
             ptsList = []
 
-            if newGeometry.wkbType() == QgsWkbTypes.MultiLineString:
+            linesList = newGeometry.asMultiPolyline()
+            #QgsMessageLog.logMessage(
+            #    "In getRestrictionGeometry - nrPts:  " + str(len(vertices)),
+            #    tag="TOMs panel")
 
-                linesList = newGeometry.asMultiPolyline()
-                #QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - nrPts:  " + str(len(vertices)),
-                #    tag="TOMs panel")
-
-                for verticesList in linesList:
-                    for v in verticesList:
-                        ptsList.append(v)
-                #QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - have points ",
-                #    tag="TOMs panel")
-                # outputGeometry = QgsGeometry.fromMultiPolygonXY([ptsList])
-                outputGeometry = QgsGeometry.fromPolygonXY([ptsList])
-
-            else:
-
-                vertices = newGeometry.asPolyline()
-                # QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - nrPts:  " + str(len(vertices)),
-                #    tag="TOMs panel")
-
-                for v in vertices:
+            for verticesList in linesList:
+                for v in verticesList:
                     ptsList.append(v)
-                # QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - have points ",
-                #    tag="TOMs panel")
-                outputGeometry = QgsGeometry.fromPolygonXY([ptsList])
+            #QgsMessageLog.logMessage(
+            #    "In getRestrictionGeometry - have points ",
+            #    tag="TOMs panel")
+            outputGeometry = QgsGeometry.fromPolygonXY([ptsList])
 
             #outputGeometry = newGeometry
 
@@ -575,7 +553,6 @@ class generateGeometryUtils:
 
         return outputGeometry
 
-    @staticmethod
     def checkFeatureIsBay(restGeomType):
         QgsMessageLog.logMessage("In checkFeatureIsBay: restGeomType = " + str(restGeomType), tag="TOMs panel")
         if restGeomType < 10 or (restGeomType >=20 and restGeomType < 30):
@@ -583,7 +560,6 @@ class generateGeometryUtils:
         else:
             return False
 
-    @staticmethod
     def getDisplayGeometry(feature, restGeomType, offset, shpExtent, orientation, AzimuthToCentreLine):
         # Obtain relevant variables
         #QgsMessageLog.logMessage("In getDisplayGeometry: restGeomType = " + str(restGeomType), tag="TOMs panel")
@@ -744,7 +720,6 @@ class generateGeometryUtils:
 
         return newLine, parallelPtsList
 
-    @staticmethod
     def zigzag(feature, wavelength, amplitude, restGeometryType, offset, shpExtent, orientation, AzimuthToCentreLine):
         """
             Taken from: https://www.google.fr/url?sa=t&rct=j&q=&esrc=s&source=web&cd=8&cad=rja&uact=8&ved=0ahUKEwi06c6nkMzWAhWCwxoKHWHMC34QFghEMAc&url=http%3A%2F%2Fwww.geoinformations.developpement-durable.gouv.fr%2Ffichier%2Fodt%2Fgenerateur_de_zigzag_v1_cle0d3366.odt%3Farg%3D177834503%26cle%3Df6f59e5a812d5c3e7a829f05497213f839936080%26file%3Dodt%252Fgenerateur_de_zigzag_v1_cle0d3366.odt&usg=AOvVaw0JoVM0llmrvSCdxOEaGCOH
@@ -843,7 +818,6 @@ class generateGeometryUtils:
 
         return gLine
 
-    @staticmethod
     def meanAngle(a1, a2):
         return phase((rect(1, a1) + rect(1, a2)) / 2.0)
 
