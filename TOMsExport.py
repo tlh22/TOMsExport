@@ -75,29 +75,22 @@ class setupTableNames(QObject):
         #self.proposalsManager = proposalsManager
 
         #RestrictionsLayers = QgsMapLayerRegistry.instance().mapLayersByName("RestrictionLayers")[0]
-        """self.TOMsLayerList = [["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
+        self.TOMsExportLayerList = [["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
                                         "GeometryID", "BaysWordingID", "RoadName", "USRN", "OpenDate",
-                                        "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" < 20', 'Line'],
+                                        "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" < 20', 'Linestring'],
                               ["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
                                         "GeometryID", "BaysWordingID", "RoadName", "USRN", "OpenDate",
                                         "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" > 20', 'Polygon'],
                               ["Lines", ["Length", "RestrictionTypeID", "NoWaitingTimeID", "NoLoadingTimeID", "GeometryID",
-                                         "RoadName", "USRN", "OpenDate", "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" > 0', 'Line'],
+                                         "RoadName", "USRN", "OpenDate", "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" > 0', 'Linestring'],
                          #"Signs",
                             ["RestrictionPolygons", ["RestrictionTypeID", "OpenDate", "USRN", "RoadName",
                                                      "GeometryID", "NoWaitingTimeID", "NoLoadingTimeID",
                                                      "TimePeriodID", "AreaPermitCode", "CPZ"], '', 'Polygon'],
                             ["CPZs", ["WaitingTimeID", "CPZ", "OpenDate", "GeometryID"], '', 'Polygon'],
                             ["ParkingTariffAreas", ["id", "Name", "NoReturnTimeID", "MaxStayID", "TimePeriodID", "OpenDate"], '', 'Polygon']
-                         ]"""
-        self.TOMsLayerList = [
-            #"Signs",
-                            ["RestrictionPolygons", ["RestrictionTypeID", "OpenDate", "USRN", "RoadName",
-                                                     "GeometryID", "NoWaitingTimeID", "NoLoadingTimeID",
-                                                     "TimePeriodID", "AreaPermitCode", "CPZ"], '', 'Polygon'],
-                            ["CPZs", ["WaitingTimeID", "CPZ", "OpenDate", "GeometryID"], '', 'Polygon'],
-                            ["ParkingTariffAreas", ["id", "Name", "NoReturnTimeID", "MaxStayID", "TimePeriodID", "OpenDate"], '', 'Polygon']
                          ]
+
         self.TOMsLayerDict = {}
 
     def getLayers(self):
@@ -114,7 +107,7 @@ class setupTableNames(QObject):
 
         else:
 
-            for layer in self.TOMsLayerList:
+            for layer in self.TOMsExportLayerList:
                 if QgsProject.instance().mapLayersByName(layer[0]):
                     self.TOMsLayerDict[layer[0]] = QgsProject.instance().mapLayersByName(layer[0])[0]
                 else:
@@ -163,7 +156,7 @@ class setupTableNames(QObject):
         if found == False:
             self.TOMsLayersNotFound.emit()
 
-        return self.TOMsLayerList
+        return self.TOMsExportLayerList
 
 
 class TOMsExport:
@@ -369,36 +362,23 @@ class TOMsExport:
                 # QMessageBox.information(self.iface.mainWindow(), "Message", ("Filename is ..." + str(fileName)))
                 QgsMessageLog.logMessage("Filename is ..." + str(fileName), tag="TOMs panel")
 
-                """options = QgsVectorFileWriter.SaveVectorOptions()
-                options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
-                # to get rid of spaces in the layer name
-                options.layerName = "_".join(layer.name().split(' '))
-
-                writer = QgsVectorFileWriter.writeAsVectorFormat(layer, "V:/test_layer/test_gpkg", options)"""
-
                 # Get list of all the layers that are required within the Geopackage
 
-                # Could check whether or not file exists. If, firstPass is False
+                # TODO: Could check whether or not file exists. If, firstPass is False
                 firstPass = True
                 firstBaysPass = True
 
-                for layer in self.TOMsLayerList:
+                for layer in self.TOMsExportLayerList:
                     if QgsProject.instance().mapLayersByName(layer[0]):
 
                         QgsMessageLog.logMessage("Considering " + str(layer[0]), tag="TOMs panel")
                         currLayer = QgsProject.instance().mapLayersByName(layer[0])[0]
 
-                        # Create a new layer with geometry column and type
-
                         reqFields = layer[1]
                         condition = layer[2]
                         geomType = layer[3]
 
-                        # newLayer = QgsVectorLayer(newURI.uri(False), newLayerName)
-
-
-                        # Now add the layer to the geopackage
-
+                        # Create a new memory layer
                         options = QgsVectorFileWriter.SaveVectorOptions()
 
                         ext = 'export'
@@ -407,57 +387,25 @@ class TOMsExport:
                                 firstBaysPass = False
                                 ext='exportLines'
                                 options.overrideGeometryType = QgsWkbTypes.LineString
-                                #geomType = 'Line'
-                                # ext='exportPolygons'
-                                # options.overrideGeometryType = QgsWkbTypes.Polygon
                             else:
                                 ext='exportPolygons'
                                 options.overrideGeometryType = QgsWkbTypes.Polygon
-                                #geomType = 'Polygon'
                         else:
                             options.overrideGeometryType = currLayer.wkbType()
-                            """if currLayer.name() == "Lines":
-                                geomType = 'Line'
-                            else:
-                                geomType = 'Polygon'"""
 
                         newLayerName = '{currLayerName}_{ext}'.format(currLayerName=currLayer.name(), ext=ext)
 
-                        #newDetails = "'{type}'?={crs}".format(type=geomType, crs=currLayer.crs())
-                        #newLayer = QgsVectorLayer(fileName, newLayerName)
-                        newLayer = QgsVectorLayer("{type}?={crs}".format(type='Polygon', #QgsWkbTypes.geometryDisplayString(int(options.overrideGeometryType)),
-                                                                     crs=currLayer.crs()), newLayerName, "memory")
-                        #newLayer.setCrs(currLayer.crs())  # This stops the "Select CRS" popup
+                        newLayer = QgsVectorLayer("{type}?={crs}".format(type=geomType, #QgsWkbTypes.geometryDisplayString(int(options.overrideGeometryType)),
+                                                                     crs='EPSG:27700'), newLayerName, "memory")
 
-                        """writerObj = QgsVectorFileWriter(vectorFileName=fileName,
-                                                        fileEncoding='UTF-8',
-                                                        fields=self.setFieldsForTOMsExportLayer(currLayer, reqFields),
-                                                        srs=currLayer.crs(),
-                                                        geometryType=options.overrideGeometryType,
-                                                        driverName=options.driverName,
-                                                        datasourceOptions=[newURI.uri()])
-
-                        self.writer = writerObj.writeAsVectorFormat(newLayer, fileName, options)
-                        if self.writer:
-                            QgsMessageLog.logMessage("Error: " + newLayer.name() + " " + str(self.writer), tag="TOMs panel")
-                            print(currLayer.name(), self.writer)
-
-                        newLayerA = self.iface.addVectorLayer(fileName+ "|layername=" + newLayerName, newLayerName, "ogr")"""
-
-                        # self.setTOMsExportLayerFields(currLayer, newLayer, reqFields)
                         newLayer.startEditing()
                         newFields = self.setFieldsForTOMsExportLayer(currLayer, reqFields)
                         newLayer.dataProvider().addAttributes(newFields)
                         newLayer.commitChanges()
 
                         # Get geometry and list of fields
-                        # Create a new feature from the current feature
-                        # newLayer.startEditing()
-                        self.addTOMsRestrictionsToLayer(currLayer, newLayer, reqFields, condition)
-                        # newLayerA = self.iface.addVectorLayer(fileName+ "|layername=" + newLayerName, newLayerName, "ogr")
 
-                        # newLayer.commitChanges()
-                        # newURI = currLayer.dataProvider().uri()
+                        self.addTOMsRestrictionsToLayer(currLayer, newLayer, reqFields, condition)
                         newURI = newLayer.dataProvider().uri()
                         # newURI = QgsDataSourceUri()
                         newURI.setDatabase(fileName)
@@ -470,8 +418,6 @@ class TOMsExport:
                             firstPass = False
                         else:
                             options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
-
-                        # options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
 
                         options.layerName = newLayerName
                         options.driverName = "GPKG"
@@ -486,11 +432,6 @@ class TOMsExport:
                         newLayerA = self.iface.addVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
                                                               "ogr")
 
-                        # QgsProject.instance().addMapLayer(newLayerA)
-                        # del self.writer
-                        # del newLayer
-                        # del newLayer
-
                     else:
                         QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table " + layer + " is not present"))
                         found = False
@@ -499,19 +440,16 @@ class TOMsExport:
     def setCloseTOMsFlag(self):
         self.closeTOMs = True
 
-    def addNewgeometryField(self):
-        pass
-
     def write_log_message(self, message, tag, level):
         # filename = os.path.join('C:\Users\Tim\Documents\MHTC', 'qgis.log')
         with open(self.filename, 'a') as logfile:
             logfile.write('{dateDetails}:: {message}\n'.format(dateDetails= time.strftime("%Y%m%d:%H%M%S"), message=message))
 
-    def setTOMsExportLayerFields(self, currLayer, newLayer, reqFields):
+        """def setTOMsExportLayerFields(self, currLayer, newLayer, reqFields):
 
         currFields = currLayer.fields()
 
-        """ Loop through all the fields in currLayer and add as appropriate"""
+        # Loop through all the fields in currLayer and add as appropriate
         newLayer.startEditing()
         for field in currFields:
             if field.name() in reqFields:
@@ -522,6 +460,7 @@ class TOMsExport:
         newLayer.commitChanges()
 
         return
+        """
 
     def setFieldsForTOMsExportLayer(self, currLayer, reqFields):
 
@@ -529,23 +468,17 @@ class TOMsExport:
         newFields = QgsFields()
 
         """ Loop through all the fields in currLayer and add as appropriate"""
-        #newLayer.startEditing()
         for field in currFields:
             if field.name() in reqFields:
                 status = newFields.append(field)
-                # status = newLayer.addAttribute(field)
                 if status == False:
                     QgsMessageLog.logMessage("Error adding " + field.name(), tag="TOMs panel")
-
-                    #newLayer.commitChanges()
 
         return newFields
 
     def addTOMsRestrictionsToLayer(self, currLayer, newLayer, reqFields, condition):
 
         currFields = currLayer.fields()
-        # reqFields = newLayer.fields()
-        reqFieldsList = newLayer.fields().toList()
 
         exp = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL {condition}'.format(condition=condition)
         exp = QgsExpression(exp)
@@ -573,8 +506,8 @@ class TOMsExport:
             newLayer.addFeature(newFeature)
 
             del newFeature
-            # self.writer.addFeature(newFeature)
             """ TODO: Check for errors """
+
         newLayer.commitChanges()
         del exp
         del request
