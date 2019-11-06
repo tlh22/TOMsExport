@@ -333,7 +333,7 @@ class TOMsExport:
 
             self.tableNames = setupTableNames(self.iface)
             self.tableNames.TOMsLayersNotFound.connect(self.setCloseTOMsFlag)
-            self.TOMsLayerList = self.tableNames.getLayers()
+            self.TOMsExportLayerList = self.tableNames.getLayers()
 
             if self.closeTOMs:
                 QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Unable to start TOMs ..."))
