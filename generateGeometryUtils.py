@@ -8,8 +8,6 @@
 #---------------------------------------------------------------------
 # Tim Hancock 2017
 
-from qgis.PyQt.QtCore import QVariant
-
 from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
@@ -96,7 +94,7 @@ class generateGeometryUtils:
         prevAzA = generateGeometryUtils.checkDegrees(prevAz + float(Turn))
         currAzA = generateGeometryUtils.checkDegrees(currAz + float(Turn))
 
-        # QgsMessageLog.logMessage("In calcBisector: prevAzA: " + str(prevAzA) + " currAz: " + str(currAzA), tag="TOMs panel")
+        # QgsMessageLog.logMessage("In calcBisector: prevAzA: " + str(prevAzA) + " currAzA: " + str(currAzA), tag="TOMs panel")
 
         """
         if prevAz > 180:
@@ -107,7 +105,7 @@ class generateGeometryUtils:
 
         # QgsMessageLog.logMessage("In calcBisector: revPrevAz: " + str(revPrevAz), tag="TOMs panel")
 
-        diffAz = generateGeometryUtils.checkDegrees(prevAzA - currAzA)
+        diffAz = prevAzA - currAzA
 
         # QgsMessageLog.logMessage("In calcBisector: diffAz: " + str(diffAz), tag="TOMs panel")
 
@@ -115,7 +113,7 @@ class generateGeometryUtils:
         bisectAz = prevAzA - diffAngle
 
         diffAngle_rad = math.radians(diffAngle)
-        # QgsMessageLog.logMessage("In calcBisector: diffAngle_rad: " + str(diffAngle_rad), tag="TOMs panel")
+        # QgsMessageLog.logMessage("In calcBisector: diffAngle: " + str(diffAngle) + " diffAngle_rad: " + str(diffAngle_rad), tag="TOMs panel")
         distToPt = float(WidthRest) / math.cos(diffAngle_rad)
 
         # QgsMessageLog.logMessage("In generate_display_geometry: bisectAz: " + str(bisectAz) + " distToPt:" + str(distToPt), tag="TOMs panel")
@@ -384,204 +382,22 @@ class generateGeometryUtils:
         return None
 
     @staticmethod
-    def getRestrictionGeometry(feature):
-        # Function to control creation of geometry for any restriction
-        QgsMessageLog.logMessage("In getRestrictionGeometry: " + str(feature.attribute("GeometryID")), tag="TOMs panel")
-
-        project = QgsProject.instance()
-        bayWidth = float(QgsExpressionContextUtils.projectScope(project).variable('BayWidth'))
-        QgsMessageLog.logMessage("In getRestrictionGeometry - obtained bayWidth" + str(bayWidth), tag="TOMs panel")
-        bayLength = float(QgsExpressionContextUtils.projectScope(project).variable("BayLength"))
-        bayOffsetFromKerb = float(QgsExpressionContextUtils.projectScope(project).variable("BayOffsetFromKerb"))
-        lineOffsetFromKerb = float(QgsExpressionContextUtils.projectScope(project).variable("LineOffsetFromKerb"))
-        crossoverShapeWidth = float(QgsExpressionContextUtils.projectScope(project).variable("CrossoverShapeWidth"))
-        QgsMessageLog.logMessage("In getRestrictionGeometry - obtained variables", tag="TOMs panel")
-        nrBays = 0
-
-        restGeomType = feature.attribute("GeomShapeID")
-        AzimuthToCentreLine = float(feature.attribute("AzimuthToRoadCentreLine"))
-
-        if generateGeometryUtils.checkFeatureIsBay(restGeomType) == True:
-            if QVariant(feature.attribute("NrBays")).isNull():
-                nrBays = float(-1)
-            else:
-                nrBays = float(feature.attribute("NrBays"))
+    def getReverseAzimuth(Az):
+        if (Az + 180) > 360:
+            AzimuthToCentreLine = Az - 180
         else:
-            nrBays = 0
+            AzimuthToCentreLine = Az + 180
+        return AzimuthToCentreLine
 
-        # set up parameters for different shapes
-
-        orientation = 0
-
-        if restGeomType == 1 or restGeomType == 21:  # 1 = Parallel (bay)
-            offset = bayOffsetFromKerb
-            shpExtent = bayWidth
-        elif restGeomType == 2:  # 2 = half on/half off
-            offset = bayOffsetFromKerb
-            shpExtent = bayWidth / 2
-            if (AzimuthToCentreLine + 180) > 360:
-                secondAzimuthToCentreLine = AzimuthToCentreLine - 180
+        """
+        @staticmethod
+        def checkFeatureIsBay(restGeomType):
+            QgsMessageLog.logMessage("In checkFeatureIsBay: restGeomType = " + str(restGeomType), tag="TOMs panel")
+            if restGeomType < 10 or (restGeomType >=20 and restGeomType < 30):
+                return True
             else:
-                secondAzimuthToCentreLine = AzimuthToCentreLine + 180
-        elif restGeomType == 3:  # 3 = on pavement
-            offset = bayOffsetFromKerb
-            shpExtent = bayWidth
-            if (AzimuthToCentreLine + 180) > 360:
-                AzimuthToCentreLine = AzimuthToCentreLine - 180
-            else:
-                AzimuthToCentreLine = AzimuthToCentreLine + 180
-        elif restGeomType == 4 or restGeomType == 24:  # 4 = Perpendicular
-            offset = bayOffsetFromKerb
-            shpExtent = bayLength
-        elif restGeomType == 5  or restGeomType == 25:  # 5 = Echelon
-            offset = bayOffsetFromKerb
-            shpExtent = bayLength
-            orientation = feature.attribute("BayOrientation")
-            if not orientation:
-                orientation = 0
-        elif restGeomType == 6:  # 6 = Perpendicular on pavement
-            offset = 0
-            shpExtent = bayLength
-        elif restGeomType == 7:  # 7 = Other
-            offset = 0
-            shpExtent = 0
-        elif restGeomType == 8 or restGeomType == 28:  # 8 = Outline
-            offset = 0
-            shpExtent = 0
-        elif restGeomType == 10:  # 10 = Parallel (line)
-            offset = lineOffsetFromKerb
-            shpExtent = lineOffsetFromKerb
-        elif restGeomType == 11:  # 11 = Parallel (line) with loading
-            offset = lineOffsetFromKerb
-            shpExtent = 0
-        elif restGeomType == 12:  # 12 = Zig-Zag
-            offset = lineOffsetFromKerb
-            shpExtent = 0
-            wavelength = 1
-            amplitude = 0.1
-        elif restGeomType == 35:  # 35 = Droppped Kerb (Crossover)
-            QgsMessageLog.logMessage("In getRestrictionGeometry - found crossover", tag="TOMs panel")
-            offset = lineOffsetFromKerb
-            shpExtent = crossoverShapeWidth
-            if (AzimuthToCentreLine + 180) > 360:
-                AzimuthToCentreLine = AzimuthToCentreLine - 180
-            else:
-                AzimuthToCentreLine = AzimuthToCentreLine + 180
-        else:
-            offset = 0
-            shpExtent = 0
-
-        # Now get the geometry
-
-        QgsMessageLog.logMessage("In getRestrictionGeometry - calling display", tag="TOMs panel")
-
-        if restGeomType == 12:  # ZigZag
-            outputGeometry = generateGeometryUtils.zigzag(feature, wavelength, amplitude, restGeomType, offset,
-                                                         shpExtent, orientation, AzimuthToCentreLine)
-        else:
-            outputGeometry, parallelLine = generateGeometryUtils.getDisplayGeometry(feature, restGeomType, offset, shpExtent,
-                                                                     orientation, AzimuthToCentreLine)
-
-        QgsMessageLog.logMessage("In getRestrictionGeometry - geometry1 prepared for " + str(feature.attribute("GeometryID")), tag="TOMs panel")
-
-        #if feature.attribute("RestrictionTypeID") == 18:  # Greenway Parking Bay
-        if restGeomType >= 20:  # Polygon
-
-            if restGeomType in [21, 24, 25, 35]:
-                outputGeometry1 = outputGeometry
-                # Now generate a line along the kerb. NB: May want to consider the situation of Central Bays.
-                outputGeometry2A, parallelLine2A = generateGeometryUtils.getDisplayGeometry(feature, 10, bayOffsetFromKerb, bayOffsetFromKerb,
-                                                                         orientation, AzimuthToCentreLine)
-                # remove the first and the last points
-
-                #ptsList = []
-                vertices = outputGeometry2A.asPolyline()
-
-                #QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - nrPts in 2A:  " + str(len(vertices)),
-                #    tag="TOMs panel")
-
-                # ... and combine the two geometries
-                newGeometry = outputGeometry1.combine(outputGeometry2A)
-
-            else:
-
-                newGeometry = outputGeometry
-
-            #QgsMessageLog.logMessage(
-            #    "In getRestrictionGeometry - newGeometry prepared for " + str(feature.attribute("GeometryID")),
-            #    tag="TOMs panel")
-
-            # now convert the geometry to a polygon
-            # https://gis.stackexchange.com/questions/64247/where-to-find-the-variables-of-qgspolygon-and-qgspolyline (see answer 2)
-
-            ptsList = []
-
-            if newGeometry.wkbType() == QgsWkbTypes.MultiLineString:
-
-                linesList = newGeometry.asMultiPolyline()
-                #QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - nrPts:  " + str(len(vertices)),
-                #    tag="TOMs panel")
-
-                for verticesList in linesList:
-                    for v in verticesList:
-                        ptsList.append(v)
-                #QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - have points ",
-                #    tag="TOMs panel")
-                # outputGeometry = QgsGeometry.fromMultiPolygonXY([ptsList])
-                outputGeometry = QgsGeometry.fromPolygonXY([ptsList])
-
-            else:
-
-                vertices = newGeometry.asPolyline()
-                # QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - nrPts:  " + str(len(vertices)),
-                #    tag="TOMs panel")
-
-                for v in vertices:
-                    ptsList.append(v)
-                # QgsMessageLog.logMessage(
-                #    "In getRestrictionGeometry - have points ",
-                #    tag="TOMs panel")
-                outputGeometry = QgsGeometry.fromPolygonXY([ptsList])
-
-            #outputGeometry = newGeometry
-
-        if restGeomType == 2:  # 2 = half on/half off
-
-            outputGeometry1 = outputGeometry
-            # Now generate a line along the kerb. NB: May want to consider the situation of Central Bays.
-            outputGeometry2A, parallelLine2A = generateGeometryUtils.getDisplayGeometry(feature, restGeomType, offset, shpExtent,
-                                                                     orientation, secondAzimuthToCentreLine)
-
-            #QgsMessageLog.logMessage(
-            #    "In getRestrictionGeometry - newGeometry prepared for " + str(feature.attribute("GeometryID")),
-            #    tag="TOMs panel")
-
-            # ... and combine the two geometries
-            # https://gis.stackexchange.com/questions/108343/what-is-the-inverse-of-qgsgeometry-asgeometrycollection-in-qgis-python
-            #newgeom = QgsGeometry.fromMultiPolyline([part for part in geom.asMultiPolyline()])
-
-            #outputGeometry1.convertToMultiType()
-            #QgsMessageLog.logMessage("In getRestrictionGeometry - converting to multi", tag="TOMs panel")
-            outputGeometry = outputGeometry1.combine(outputGeometry2A)
-            QgsMessageLog.logMessage("In getRestrictionGeometry - combined ...", tag="TOMs panel")
-
-        if nrBays > 1:
-            # divide parallelLine by the number of bays
-            pass
-
-        return outputGeometry
-
-    @staticmethod
-    def checkFeatureIsBay(restGeomType):
-        QgsMessageLog.logMessage("In checkFeatureIsBay: restGeomType = " + str(restGeomType), tag="TOMs panel")
-        if restGeomType < 10 or (restGeomType >=20 and restGeomType < 30):
-            return True
-        else:
-            return False
+                return False
+        """
 
     @staticmethod
     def getDisplayGeometry(feature, restGeomType, offset, shpExtent, orientation, AzimuthToCentreLine):
@@ -591,7 +407,7 @@ class generateGeometryUtils:
         # Need to check why the project variable function is not working
 
         restrictionID = feature.attribute("GeometryID")
-        #QgsMessageLog.logMessage("In getDisplayGeometry: New restriction .................................................................... ID: " + str(restrictionID), tag="TOMs panel")
+        QgsMessageLog.logMessage("In getDisplayGeometry: New restriction .................................................................... ID: " + str(restrictionID), tag="TOMs panel")
         # restGeomType = feature.attribute("GeomShapeID")
         #AzimuthToCentreLine = float(feature.attribute("AzimuthToRoadCentreLine"))
         #QgsMessageLog.logMessage("In getDisplayGeometry: Az: " + str(AzimuthToCentreLine), tag = "TOMs panel")
@@ -740,7 +556,9 @@ class generateGeometryUtils:
 
         newLine = QgsGeometry.fromPolyline(ptsList)
         parallelLine = QgsGeometry.fromPolyline(parallelPtsList)
+
         #QgsMessageLog.logMessage("In getDisplayGeometry:  newGeometry ********: " + newLine.asWkt(), tag="TOMs panel")
+
 
         return newLine, parallelPtsList
 
@@ -994,7 +812,7 @@ class generateGeometryUtils:
     @staticmethod
     def getWaitingLoadingRestrictionLabelText(feature):
 
-        #QgsMessageLog.logMessage("In getWaitingLoadingRestrictionLabelText", tag="TOMs panel")
+        QgsMessageLog.logMessage("In getWaitingLoadingRestrictionLabelText", tag="TOMs panel")
 
         waitingTimeID = feature.attribute("NoWaitingTimeID")
         loadingTimeID = feature.attribute("NoLoadingTimeID")
@@ -1026,7 +844,7 @@ class generateGeometryUtils:
         if loadingTimeID == 1:  # 'At Any Time'
             loadDesc = None """
 
-        #QgsMessageLog.logMessage("In getWaitingLoadingRestrictionLabelText(" + GeometryID + "): waiting: " + str(waitDesc) + " loading: " + str(loadDesc), tag="TOMs panel")
+        QgsMessageLog.logMessage("In getWaitingLoadingRestrictionLabelText(" + GeometryID + "): waiting: " + str(waitDesc) + " loading: " + str(loadDesc), tag="TOMs panel")
         return waitDesc, loadDesc
 
     @staticmethod
@@ -1059,17 +877,17 @@ class generateGeometryUtils:
         #TariffZoneNoReturnID = generateGeometryUtils.getTariffZoneNoReturnID(restrictionPTA)
         #TariffZoneTimePeriodID = generateGeometryUtils.getTariffZoneTimePeriodID(restrictionPTA)
 
-        """QgsMessageLog.logMessage(
+        QgsMessageLog.logMessage(
             "In getBayRestrictionLabelText (1): " + str(CPZWaitingTimeID) + " PTA hours: " + str(TariffZoneTimePeriodID),
             tag="TOMs panel")
-        QgsMessageLog.logMessage("In getBayRestrictionLabelText. bay hours: " + str(timePeriodID), tag="TOMs panel")"""
+        QgsMessageLog.logMessage("In getBayRestrictionLabelText. bay hours: " + str(timePeriodID), tag="TOMs panel")
 
         if timePeriodID == 1:  # 'At Any Time'
             timePeriodDesc = None
 
         if CPZWaitingTimeID:
-            """QgsMessageLog.logMessage("In getBayRestrictionLabelText: " + str(CPZWaitingTimeID) + " " + str(timePeriodID),
-                                     tag="TOMs panel")"""
+            QgsMessageLog.logMessage("In getBayRestrictionLabelText: " + str(CPZWaitingTimeID) + " " + str(timePeriodID),
+                                     tag="TOMs panel")
             if CPZWaitingTimeID == timePeriodID:
                 timePeriodDesc = None
 
@@ -1088,7 +906,7 @@ class generateGeometryUtils:
             if TariffZoneNoReturnID == noReturnID:
                 noReturnDesc = None
 
-        #QgsMessageLog.logMessage("In getBayRestrictionLabelText. timePeriodDesc (2): " + str(timePeriodDesc), tag="TOMs panel")
+        QgsMessageLog.logMessage("In getBayRestrictionLabelText. timePeriodDesc (2): " + str(timePeriodDesc), tag="TOMs panel")
 
         return maxStayDesc, noReturnDesc, timePeriodDesc
 

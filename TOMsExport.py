@@ -52,6 +52,7 @@ from qgis.gui import QgsFileWidget
 from .resources import *
 # Import the code for the dialog
 from .TOMsExport_dialog import TOMsExportDialog
+from .core.TOMsGeometryElement import ElementGeometryFactory
 import os.path
 import time
 import datetime
@@ -498,7 +499,8 @@ class TOMsExport:
                     newFeature.setAttribute(field.name(), restriction.attribute(field.name()))
 
             if condition:
-                newGeom = generateGeometryUtils.getRestrictionGeometry(restriction)
+                # newGeom = generateGeometryUtils.getRestrictionGeometry(restriction)
+                newGeom = ElementGeometryFactory.getElementGeometry(restriction)
                 newFeature.setGeometry(newGeom)
             else:
                 newFeature.setGeometry(restriction.geometry())
