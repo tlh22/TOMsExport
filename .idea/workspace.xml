@@ -1,192 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="3613ee85-3626-46c0-b52e-cb11f58ec02d" name="Default" comment="" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
+    <list default="true" id="3613ee85-3626-46c0-b52e-cb11f58ec02d" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/test/test_TOMsExport.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/tomsexport.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/tomsexport.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TOMsExport.py" beforeDir="false" afterPath="$PROJECT_DIR$/TOMsExport.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TOMsExport_dialog_base.ui" beforeDir="false" afterPath="$PROJECT_DIR$/TOMsExport_dialog_base.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/TOMsGeometryElement.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generateGeometryUtils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generateGeometryUtilsClass.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/restrictionTypeUtilsClass.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test_TOMsExport_dialog.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_TOMsExport_dialog.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="generateGeometryUtils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="384" column="8" lean-forward="false" selection-start-line="384" selection-start-column="8" selection-end-line="384" selection-end-column="8" />
-              <folding>
-                <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-                <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-                <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-                <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TOMsExport.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="485" column="63" lean-forward="false" selection-start-line="485" selection-start-column="37" selection-end-line="485" selection-end-column="63" />
-              <folding>
-                <element signature="e#1276#1309#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="restrictionTypeUtilsClass.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/restrictionTypeUtilsClass.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TOMsGeometryElement.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/TOMsGeometryElement.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="104" column="97" lean-forward="true" selection-start-line="98" selection-start-column="15" selection-end-line="104" selection-end-column="97" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>getRestrictionGeometry</find>
-      <find>generateGeometryUtils</find>
-      <find>currLayer</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>self.currLayer</replace>
-    </replaceStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/generateGeometryUtilsClass.py" />
-        <option value="$PROJECT_DIR$/generateGeometryUtils.py" />
-        <option value="$PROJECT_DIR$/TOMsExport.py" />
-        <option value="$PROJECT_DIR$/restrictionTypeUtilsClass.py" />
-        <option value="$PROJECT_DIR$/core/TOMsGeometryElement.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
+  <component name="ProjectId" id="1bcY7FZWqH2g2HwAtUWFk0LEdgu" />
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Buildout</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TomsExport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TomsExport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TomsExport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TomsExport" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/test" />
+    <property name="settings.editor.selected.configurable" value="preferences.customizations" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\marie_000\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\TomsExport\test" />
+    </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+    <configuration default="true" type="OdpsPythonConfigurationType" factoryName="MaxCompute Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -202,57 +89,29 @@
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tomsexport" />
-      <method />
-    </configuration>
-    <configuration default="true" type="tests" factoryName="Doctests">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tomsexport" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="FOLDER_NAME" value="" />
-      <option name="TEST_TYPE" value="TEST_SCRIPT" />
-      <option name="PATTERN" value="" />
-      <option name="USE_PATTERN" value="false" />
+      <option name="PROJECT_NAME" value="" />
+      <option name="TABLE_NAME" value="" />
+      <option name="TABLE_COLUMNS" value="" />
+      <option name="TABLE_PARTITION" value="" />
+      <option name="MAIN_CLASS" value="" />
+      <option name="RECORD_LIMIT" value="100" />
+      <option name="COLUMN_SEPARATOR" value="," />
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
+      <module name="tomsexport" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs />
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tomsexport" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;.&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method />
+      <method v="2" />
     </configuration>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -267,390 +126,58 @@
     </task>
     <servers />
   </component>
-  <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32947975" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-    </layout>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
+  <component name="WindowStateProjectService">
+    <state x="770" y="300" key="#Menus_and_Toolbars" timestamp="1588955961816">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="770" y="300" key="#Menus_and_Toolbars/0.0.1920.1160@0.0.1920.1160" timestamp="1588955961816" />
+    <state x="787" y="295" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog" timestamp="1589033293795">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="787" y="295" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1589033293795" />
+    <state x="740" y="334" key="FileChooserDialogImpl" timestamp="1588954834411">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="740" y="334" key="FileChooserDialogImpl/0.0.1920.1160@0.0.1920.1160" timestamp="1588954834411" />
+    <state x="461" y="224" key="SettingsEditor" timestamp="1589033303161">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="461" y="224" key="SettingsEditor/0.0.1920.1160@0.0.1920.1160" timestamp="1589033303161" />
+    <state x="839" y="519" key="com.intellij.ide.ui.customization.CustomizableActionsPanel$EditIconDialog" timestamp="1589033171748">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="839" y="519" key="com.intellij.ide.ui.customization.CustomizableActionsPanel$EditIconDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1589033171748" />
+    <state x="623" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1589033683742">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="623" y="255" width="672" height="678" key="search.everywhere.popup/0.0.1920.1160@0.0.1920.1160" timestamp="1589033683742" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/restrictionTypeUtilsClass.py</url>
+          <url>file://$PROJECT_DIR$/test/test_resources.py</url>
           <line>14</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test/test_TOMsExport.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="1" />
     </breakpoint-manager>
-    <watches-manager />
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8908">
-          <caret line="549" column="41" lean-forward="false" selection-start-line="517" selection-start-column="12" selection-end-line="549" selection-end-column="41" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restrictionTypeUtilsClass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6936">
-          <caret line="446" column="0" lean-forward="true" selection-start-line="442" selection-start-column="0" selection-end-line="446" selection-end-column="0" />
-          <folding>
-            <element signature="e#1276#1309#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5695">
-          <caret line="335" column="36" lean-forward="false" selection-start-line="335" selection-start-column="36" selection-end-line="335" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8908">
-          <caret line="524" column="38" lean-forward="false" selection-start-line="524" selection-start-column="38" selection-end-line="524" selection-end-column="38" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8908">
-          <caret line="524" column="38" lean-forward="false" selection-start-line="524" selection-start-column="38" selection-end-line="524" selection-end-column="38" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8908">
-          <caret line="524" column="38" lean-forward="true" selection-start-line="524" selection-start-column="38" selection-end-line="524" selection-end-column="38" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restrictionTypeUtilsClass.py" />
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtilsClass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="41" column="26" lean-forward="true" selection-start-line="41" selection-start-column="26" selection-end-line="41" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generateGeometryUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="384" column="8" lean-forward="false" selection-start-line="384" selection-start-column="8" selection-end-line="384" selection-end-column="8" />
-          <folding>
-            <marker date="1581847277675" expanded="false" signature="442:459" ph="import ..." />
-            <marker date="1581847277675" expanded="true" signature="38501:38678" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38501:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="38746:39332" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39096:39311" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39398:39974" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="39744:39953" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40032:40839" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40512:40812" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="40897:41886" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41392:41853" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="41959:43140" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42029:42399" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1581847277675" expanded="true" signature="42566:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42899:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="42977:43119" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43195:43813" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43388:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43472:43792" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="43869:44673" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44077:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44162:44640" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44731:45357" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="44941:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45026:45336" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45416:46053" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45627:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="45712:46032" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46114:46761" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46327:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46412:46740" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="46828:47462" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47027:47441" ph="..." />
-            <marker date="1581847277675" expanded="true" signature="47115:47441" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/restrictionTypeUtilsClass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/TOMsGeometryElement.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="104" column="97" lean-forward="true" selection-start-line="98" selection-start-column="15" selection-end-line="104" selection-end-column="97" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOMsExport.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="485" column="63" lean-forward="false" selection-start-line="485" selection-start-column="37" selection-end-line="485" selection-end-column="63" />
-          <folding>
-            <element signature="e#1276#1309#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>

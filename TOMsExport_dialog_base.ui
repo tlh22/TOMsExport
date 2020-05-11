@@ -29,28 +29,34 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QgsFileWidget" name="fileNameWidget">
+  <widget class="QWidget" name="formLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>149</x>
-     <y>40</y>
-     <width>151</width>
-     <height>27</height>
+     <x>20</x>
+     <y>20</y>
+     <width>351</width>
+     <height>211</height>
     </rect>
    </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>50</y>
-     <width>101</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Geopackage:</string>
-   </property>
+   <layout class="QFormLayout" name="frmLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Geopackage:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QgsFileWidget" name="fileNameWidget"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>

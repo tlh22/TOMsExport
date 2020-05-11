@@ -14,13 +14,15 @@ __copyright__ = 'Copyright 2019, TH'
 
 import unittest
 
-from PyQt5.QtGui import QDialogButtonBox, QDialog
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog, QApplication
 
 from TOMsExport_dialog import TOMsExportDialog
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
+IFACE = QGIS_APP[2]
 
+#app = QApplication(sys.argv)
 
 class TOMsExportDialogTest(unittest.TestCase):
     """Test dialog works."""

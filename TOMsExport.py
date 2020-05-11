@@ -21,15 +21,28 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+
+import os.path, math
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 # from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtGui import (QIcon, QStandardItemModel, QStandardItem
+                             )
+from qgis.PyQt.QtWidgets import (
+    QAction,
+    QWidget,
+    QMessageBox,
+    QDialog,
+    QVBoxLayout, QCheckBox, QListView, QAbstractItemView, QFormLayout, QDialogButtonBox, QLabel, QGroupBox
+)
 
 from qgis.PyQt.QtCore import (
     QObject,
     QTimer,
     pyqtSignal,
-    QSettings, QTranslator, qVersion, QCoreApplication
+    QSettings, QTranslator, qVersion, QCoreApplication, Qt, QModelIndex
 )
 
 from qgis.core import (
@@ -46,22 +59,23 @@ from qgis.core import (
     QgsFields, QgsDataSourceUri, QgsWkbTypes
 )
 
-from qgis.gui import QgsFileWidget
+from qgis.gui import QgsFileWidget, QgisInterface
+from qgis.utils import iface
 
 # Initialize Qt resources from file resources.py
-from .resources import *
+from resources import *
 # Import the code for the dialog
-from .TOMsExport_dialog import TOMsExportDialog
-from .core.TOMsGeometryElement import ElementGeometryFactory
+from TOMsExport_dialog import TOMsExportDialog
+from TOMs.core.TOMsGeometryElement import ElementGeometryFactory
 import os.path
 import time
 import datetime
 
-from .generateGeometryUtils import generateGeometryUtils
+from TOMs.generateGeometryUtils import generateGeometryUtils
 
 # TODO: Deal with paths. Ideally want to have this plugin using the same folders as TOMs
 
-from .restrictionTypeUtilsClass import RestrictionTypeUtilsMixin
+from TOMs.restrictionTypeUtilsClass import RestrictionTypeUtilsMixin
 
 class setupTableNames(QObject):
 
@@ -92,7 +106,16 @@ class setupTableNames(QObject):
                             ["ParkingTariffAreas", ["id", "Name", "NoReturnTimeID", "MaxStayID", "TimePeriodID", "OpenDate"], '', 'Polygon']
                          ]
 
+        self.TOMsRequiredFields = ["GeometryID", "RestrictionTypeID", "RestType", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
+                                        "BaysWordingID", "RoadName", "USRN", "OpenDate",
+                                        "CPZ", "ParkingTariffArea", "Restriction_Length",   # for bays
+                                   "NoWaitingTimeID", "NoLoadingTimeID",    # for lines
+                                   "AreaPermitCode"  # for polygons
+                                   ]
         self.TOMsLayerDict = {}
+
+    def getRequiredFields(self):
+        return self.TOMsRequiredFields
 
     def getLayers(self):
 
@@ -200,7 +223,7 @@ class TOMsExport:
         self.closeTOMs = False
 
         # Set up log file and collect any relevant messages
-        logFilePath = os.environ.get('QGIS_LOGFILE_PATH')
+        """logFilePath = os.environ.get('QGIS_LOGFILE_PATH')
 
         if logFilePath:
 
@@ -209,7 +232,7 @@ class TOMsExport:
             logfile = 'qgis_' + datetime.date.today().strftime("%Y%m%d") + '.log'
             self.filename = os.path.join(logFilePath, logfile)
             QgsMessageLog.logMessage("Sorting out log file" + self.filename, tag="TOMs panel")
-            QgsApplication.instance().messageLog().messageReceived.connect(self.write_log_message)
+            QgsApplication.instance().messageLog().messageReceived.connect(self.write_log_message)"""
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -238,44 +261,6 @@ class TOMsExport:
         status_tip=None,
         whats_this=None,
         parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
 
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -329,29 +314,28 @@ class TOMsExport:
 
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
+        utils = TOMsExportUtils(self.iface)
         if self.first_start == True:
             self.first_start = False
 
             self.tableNames = setupTableNames(self.iface)
             self.tableNames.TOMsLayersNotFound.connect(self.setCloseTOMsFlag)
-            self.TOMsExportLayerList = self.tableNames.getLayers()
+            #self.TOMsExportLayerList = self.tableNames.getLayers()
+            requiredFields = self.tableNames.getRequiredFields()
 
             if self.closeTOMs:
                 QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Unable to start TOMs ..."))
                 return
 
-            self.dlg = TOMsExportDialog()
-
-            fileNameWidget = self.dlg.findChild(QgsFileWidget, "fileNameWidget")
-            fileNameWidget.setStorageMode(QgsFileWidget.SaveFile)
-            fileNameWidget.setFilter("Geopackage (*.gpkg);;JPEG (*.jpg *.jpeg);;TIFF (*.tif)")
-            fileNameWidget.setSelectedFilter("Geopackage (*.gpkg)")
+            self.setupUi()
 
             # show the dialog
             self.dlg.show()
             # Run the dialog event loop
             result = self.dlg.exec_()
             # See if OK was pressed
+            # TODO: Make sure that there is a valid file location
+
             if result:
 
                 # Open geopackage
@@ -359,109 +343,209 @@ class TOMsExport:
                 canvas = self.iface.mapCanvas()
                 layer = canvas.currentLayer()
 
-                fileName = fileNameWidget.filePath()
+                fileName = self.fileNameWidget.filePath()
                 # QMessageBox.information(self.iface.mainWindow(), "Message", ("Filename is ..." + str(fileName)))
                 QgsMessageLog.logMessage("Filename is ..." + str(fileName), tag="TOMs panel")
 
                 # Get list of all the layers that are required within the Geopackage
 
-                # TODO: Could check whether or not file exists. If, firstPass is False
-                firstPass = True
-                firstBaysPass = True
+                layerItemsList = self.layerList.getSelectedLayers()
+                for currLayerItem in layerItemsList:
+                    QgsMessageLog.logMessage("Processing {} ...".format(currLayerItem.text()), tag="TOMs panel")
 
-                for layer in self.TOMsExportLayerList:
-                    if QgsProject.instance().mapLayersByName(layer[0]):
+                    currLayer = QgsProject.instance().mapLayersByName(currLayerItem.text())[0]
 
-                        QgsMessageLog.logMessage("Considering " + str(layer[0]), tag="TOMs panel")
-                        currLayer = QgsProject.instance().mapLayersByName(layer[0])[0]
+                    outputLayersList = utils.processLayer(currLayer, requiredFields)
+                    #status = utils.saveOutputLayers(outputlayersList, fileName)
+                    for newLayerName, newLayer in outputLayersList:
+                        utils.saveLayerToGpkg(newLayer, fileName)
 
-                        reqFields = layer[1]
-                        condition = layer[2]
-                        geomType = layer[3]
+                        newLayerA = QgsVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
+                                                  "ogr")
+                        QgsProject.instance().addMapLayer(newLayerA)
 
-                        # Create a new memory layer
-                        options = QgsVectorFileWriter.SaveVectorOptions()
+                QgsMessageLog.logMessage("******** FINSIHED ********", tag="TOMs panel")
 
-                        ext = 'export'
-                        if currLayer.name() == "Bays":
-                            if firstBaysPass:
-                                firstBaysPass = False
-                                ext='exportLines'
-                                options.overrideGeometryType = QgsWkbTypes.LineString
-                            else:
-                                ext='exportPolygons'
-                                options.overrideGeometryType = QgsWkbTypes.Polygon
-                        else:
-                            options.overrideGeometryType = currLayer.wkbType()
+            #self.dlg.close()
 
-                        newLayerName = '{currLayerName}_{ext}'.format(currLayerName=currLayer.name(), ext=ext)
+    def setupUi(self):
 
-                        newLayer = QgsVectorLayer("{type}?={crs}".format(type=geomType, #QgsWkbTypes.geometryDisplayString(int(options.overrideGeometryType)),
-                                                                     crs='EPSG:27700'), newLayerName, "memory")
+        self.dlg = QDialog()
+        self.dlg.setWindowTitle("TOMs Export")
+        self.dlg.setWindowModality(Qt.ApplicationModal)
 
-                        newLayer.startEditing()
-                        newFields = self.setFieldsForTOMsExportLayer(currLayer, reqFields)
-                        newLayer.dataProvider().addAttributes(newFields)
-                        newLayer.commitChanges()
+        self.generalLayout = QVBoxLayout()
 
-                        # Get geometry and list of fields
+        layerGroup = QGroupBox("Choose layers to export")
+        # test = QLabel()
+        # test.setText("Choose layers to export and confirm location of output")
+        # self.generalLayout.addWidget(test)
 
-                        self.addTOMsRestrictionsToLayer(currLayer, newLayer, reqFields, condition)
-                        newURI = newLayer.dataProvider().uri()
-                        # newURI = QgsDataSourceUri()
-                        newURI.setDatabase(fileName)
-                        newURI.setDataSource('', newLayerName, "SHAPE")
-                        newURI.setSrid = currLayer.crs()
-                        newURI.setTable = newLayerName
-                        newURI.setKeyColumn = currLayer.primaryKeyAttributes()[0]
+        # add map layer list
+        self.layerList = checkableMapLayerList()
+        vbox1 = QVBoxLayout()
+        vbox1.addWidget(self.layerList)
+        layerGroup.setLayout(vbox1)
+        self.generalLayout.addWidget(layerGroup)
 
-                        if firstPass:
-                            firstPass = False
-                        else:
-                            options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
+        # add file chooser
+        outputGroup = QGroupBox("Choose output file")
+        self.fileNameWidget = QgsFileWidget()
+        self.fileNameWidget.setStorageMode(QgsFileWidget.SaveFile)
+        self.fileNameWidget.setFilter("Geopackage (*.gpkg);;JPEG (*.jpg *.jpeg);;TIFF (*.tif)")
+        self.fileNameWidget.setSelectedFilter("Geopackage (*.gpkg)")
+        vbox2 = QVBoxLayout()
+        vbox2.addWidget(self.fileNameWidget)
+        outputGroup.setLayout(vbox2)
+        self.generalLayout.addWidget(outputGroup)
 
-                        options.layerName = newLayerName
-                        options.driverName = "GPKG"
-                        options.datasourceOptions = [newURI.uri()]
-                        options.destCRS = currLayer.crs()
+        # add buttons
+        self.buttonBox = QDialogButtonBox(QDialogButtonBox.Ok
+                                          | QDialogButtonBox.Cancel)
+        self.buttonBox.accepted.connect(self.dlg.accept)
+        self.buttonBox.rejected.connect(self.dlg.reject)
+        self.generalLayout.addWidget(self.buttonBox)
 
-                        self.writer = QgsVectorFileWriter.writeAsVectorFormat(newLayer, fileName, options)
-                        if self.writer:
-                            QgsMessageLog.logMessage("Error: " + newLayer.name() + " " + str(self.writer), tag="TOMs panel")
-                            print(currLayer.name(), self.writer)
-
-                        newLayerA = self.iface.addVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
-                                                              "ogr")
-
-                    else:
-                        QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table " + layer + " is not present"))
-                        found = False
-                        break
+        self.dlg.setLayout(self.generalLayout)
+        checkableMapLayerListCtrl(self.layerList)
 
     def setCloseTOMsFlag(self):
         self.closeTOMs = True
 
-    def write_log_message(self, message, tag, level):
-        # filename = os.path.join('C:\Users\Tim\Documents\MHTC', 'qgis.log')
-        with open(self.filename, 'a') as logfile:
-            logfile.write('{dateDetails}:: {message}\n'.format(dateDetails= time.strftime("%Y%m%d:%H%M%S"), message=message))
+class TOMsExportUtils():
 
-        """def setTOMsExportLayerFields(self, currLayer, newLayer, reqFields):
+    def __init__(self, iface):
+        self.iface = iface
 
+    def processLayer(self, currLayer, requiredFields):
+
+        #currFields = currLayer.fields()
+
+        # decide whether or not this is a TOMs layer.
+        fieldsToInclude = self.setFieldsForTOMsExportLayer(currLayer, requiredFields)
+
+        if len(fieldsToInclude) == 0:
+            return None  # no details to add
+
+        if self.isThisTOMsLayer(currLayer) == True:
+            text = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL'
+            exp = QgsExpression(text)
+            request = QgsFeatureRequest(exp)
+            restrictionIterator = currLayer.getFeatures(request)
+        else:
+            restrictionIterator = currLayer.getFeatures()
+
+        QgsMessageLog.logMessage("In processLayer - " + currLayer.name(), tag="TOMs panel")
+
+        layerWkbType = currLayer.wkbType()
+        outputLayersList = []
+        #restrictionList = currLayer.getFeatures(request)
+
+        for currRestriction in restrictionIterator:
+            QgsMessageLog.logMessage("In processLayer - geomID: {}".format(currRestriction.attribute("GeometryID")),
+                                     tag="TOMs panel")
+            restrictionGeometryWkbType = self.getRestrictionGeometryWkbType(currRestriction, layerWkbType)
+            # check that we have a layer created
+            outputLayerName = '{currLayerName}_{ext}'.format(currLayerName=currLayer.name(), ext=QgsWkbTypes.displayString(restrictionGeometryWkbType))
+            # check to see whether or not this layer has been created already
+            #print ('---- layerName: {}'.format(outputLayerName))
+            try:
+                outputLayer = dict(outputLayersList)[outputLayerName]
+            except KeyError:
+                outputLayer = self.prepareNewLayer (currLayer, outputLayerName, restrictionGeometryWkbType, fieldsToInclude)
+
+                #print('Fields in output: {}'.format(len(outputLayer.fields())))
+
+                outputLayersList.append((outputLayerName, outputLayer))
+                #print('- Appending --- layerName: {}'.format(outputLayerName))
+                #outputLayer.startEditing()
+
+            result = self.processRestriction(currRestriction, outputLayer)
+            if result == False:
+                reply = QMessageBox.information(None, "Information", "failure to write to layer.", QMessageBox.Ok)
+                break
+
+        for newLayerName, newLayer in outputLayersList:
+            newLayer.reload()
+            newLayer.updateFields()
+            newLayer.updateExtents()
+            QgsMessageLog.logMessage("In processLayer: layer: {}, count: {}".format(newLayerName, newLayer.featureCount()),
+                                     tag="TOMs panel")
+            QgsProject.instance().addMapLayer(newLayer)
+            #canvas.setLayers([newLayer])
+
+        return outputLayersList
+
+    def saveLayerToGpkg(self, newLayer, fileName):
+
+        #for newLayerName, newLayer in outputLayersList:
+        write_result = False
+
+        QgsMessageLog.logMessage("In saveLayerToGpkg - {}, count:{}".format(newLayer.name(), newLayer.featureCount()), tag="TOMs panel")
+        options = QgsVectorFileWriter.SaveVectorOptions()
+        options.layerName = newLayer.name()
+        options.driverName = "GPKG"
+        #options.sourceCRS = newLayer.crs()
+        options.destCRS = newLayer.crs()
+        #options.editionCapabilities = QgsVectorFileWriter.CanAddNewLayer
+
+        geometry_column = 'geom'
+        newURI = newLayer.dataProvider().uri()
+        newURI.setDatabase(fileName)
+        newURI.setDataSource('', newLayer.name(), geometry_column)
+        newURI.setSrid = newLayer.crs()
+        newURI.setTable = newLayer.name()
+        #newURI.setKeyColumn = newLayer.primaryKeyAttributes()[0]
+        options.datasourceOptions = [newURI.uri()]
+
+        # check to see if file exists
+        if os.path.isfile(fileName):
+            options.actionOnExistingFile = QgsVectorFileWriter.CreateOrOverwriteLayer
+
+        """ This approach is depreciated. 
+            New approach is to use .create() function to create writer and then addFeatures(). 
+            However, I can't quite make it work. There is something with addfeatures that doesn't work ... """
+        write_result, error_message = QgsVectorFileWriter.writeAsVectorFormat(
+            newLayer,
+            fileName,
+            options)
+
+        if write_result != QgsVectorFileWriter.NoError:
+            QgsMessageLog.logMessage("Error: {errorNr} on {layer}: {txt}".format(errorNr=write_result, layer=newLayerName, txt=error_message), tag="TOMs panel")
+            #print(currLayer.name(), self.writer)
+
+        return write_result
+
+    def isThisTOMsLayer(self, currLayer):
+        # Decide whether or not this is a TOMs layer.
+        # Look for "OpenDate" and check whether or not there are values set
+        isTOMsLayer = False
         currFields = currLayer.fields()
 
-        # Loop through all the fields in currLayer and add as appropriate
-        newLayer.startEditing()
         for field in currFields:
-            if field.name() in reqFields:
-                status = newLayer.addAttribute(field)
-                if status == False:
-                    QgsMessageLog.logMessage("Error adding " + field.name(), tag="TOMs panel")
+            if field.name() == "OpenDate":
+                exp = QgsExpression('OpenDate IS NOT NULL')
+                request = QgsFeatureRequest(exp)
+                relevantFeaturesIterator = currLayer.getFeatures(request)
+                # https://stackoverflow.com/questions/3345785/getting-number-of-elements-in-an-iterator-in-python
+                sumRelevantFeatures = sum(1 for _ in relevantFeaturesIterator)
+                if sumRelevantFeatures > 0:
+                    isTOMsLayer = True
 
-        newLayer.commitChanges()
+        return isTOMsLayer
 
-        return
-        """
+    def getRestrictionGeometryWkbType(self, currRestriction, layerGeomWkbType):
+        # decide geometry type required based on layer geometry and GeomShapeID
+
+        restrictionGeometryWkbType = layerGeomWkbType
+
+        if layerGeomWkbType == QgsWkbTypes.LineString or layerGeomWkbType == QgsWkbTypes.MultiLineString:
+            restrictionGeometryWkbType = QgsWkbTypes.MultiLineString
+            geomShape = currRestriction.attribute("GeomShapeID")
+            if geomShape > 20:
+                restrictionGeometryWkbType = QgsWkbTypes.MultiPolygon
+
+        return restrictionGeometryWkbType
 
     def setFieldsForTOMsExportLayer(self, currLayer, reqFields):
 
@@ -477,41 +561,158 @@ class TOMsExport:
 
         return newFields
 
-    def addTOMsRestrictionsToLayer(self, currLayer, newLayer, reqFields, condition):
+    def prepareNewLayer(self, currLayer, newLayerName, geomWkbType, reqFields):
 
-        currFields = currLayer.fields()
+        currCrs = currLayer.crs().authid()
+        print ('---------- layer CRS: {}'.format(currCrs))
+        QgsMessageLog.logMessage('---------- layer CRS: {}'.format(currCrs), tag="TOMs panel")
+        #currCrs = 'EPSG:27700'
 
-        exp = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL {condition}'.format(condition=condition)
-        exp = QgsExpression(exp)
-        QgsMessageLog.logMessage("In addTOMsRestrictionsToLayer - " + currLayer.name() + ". Expression " + str(exp), tag="TOMs panel")
+        """newLayer = QgsVectorLayer("{type}?={crs}".format(type=geomType,
+                                                         crs='EPSG:27700'), newLayerName, "memory")"""
+        newLayer = QgsVectorLayer("{type}?crs={crs}".format(type=QgsWkbTypes.displayString(geomWkbType), crs=currCrs),
+                                  newLayerName,
+                                  "memory")
 
-        request = QgsFeatureRequest(exp)
+        #newFields = self.setFieldsForTOMsExportLayer(currLayer, reqFields)
+        newLayer.dataProvider().addAttributes(reqFields)
+        #newLayer.reload()
+        newLayer.updateFields()
 
-        newLayer.startEditing()
-        for restriction in currLayer.getFeatures(request):
+        return newLayer
 
-            QgsMessageLog.logMessage("In AddRestrictionsToLayer - " + currLayer.name() + ". Considering " + str(restriction.attribute(currLayer.primaryKeyAttributes()[0])), tag="TOMs panel")
-            newFeature = QgsFeature(newLayer.fields())
-            for field in currFields:
+    def processRestriction(self, currRestriction, newLayer):
 
-                if field.name() in reqFields:
-                    QgsMessageLog.logMessage("Adding " + field.name() + ":" + str(restriction.attribute(field.name())), tag="TOMs panel")
-                    newFeature.setAttribute(field.name(), restriction.attribute(field.name()))
+        currFields = currRestriction.fields()
+        fieldsToInclude = newLayer.fields()
+        newFeature = QgsFeature(fieldsToInclude)
 
-            if condition:
-                # newGeom = generateGeometryUtils.getRestrictionGeometry(restriction)
-                newGeom = ElementGeometryFactory.getElementGeometry(restriction)
-                newFeature.setGeometry(newGeom)
-            else:
-                newFeature.setGeometry(restriction.geometry())
+        QgsMessageLog.logMessage('*** Nr new fields: {}; curr fields {}'.format(len(fieldsToInclude), len(currFields)),
+                                         tag="TOMs panel")
 
-            newLayer.addFeature(newFeature)
+        for field in currFields:
+            if field in fieldsToInclude:
+                QgsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
+                                         tag="TOMs panel")
+                newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
 
-            del newFeature
-            """ TODO: Check for errors """
+        #newGeom = currRestriction.geometry()  # use this for testing
+        newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
 
-        newLayer.commitChanges()
-        del exp
-        del request
+        newFeature.setGeometry(newGeom)
 
-        return
+        result = newLayer.dataProvider().addFeature(newFeature)
+        return result
+
+class checkableMapLayerListCtrl:
+    """PyCalc Controller class."""
+    def __init__(self, view):
+        """Controller initializer."""
+        self._view = view
+        # Connect signals and slots
+        self._connectSignals()
+
+    def _connectSignals(self):
+        """Connect signals and slots."""
+        self._view.select_all_cb.clicked.connect(lambda: self._view.selectAllCheckChanged(self._view.select_all_cb, self._view.model))
+        self._view.view.clicked.connect(lambda: self._view.listviewCheckChanged(self._view.model, self._view.select_all_cb))
+        self._view.view.clicked[QModelIndex].connect(self._view.updateSelectedLayers)
+
+class checkableMapLayerList(QWidget):
+
+    # create a checkable list of the map layers
+
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+
+        layerList = QgsProject.instance().layerTreeRoot().findLayers()
+        self.iface = iface
+
+        """for layer in layerList:
+            print(layer.name())"""
+
+        self.selectedLayers = []
+
+        layout = QVBoxLayout()
+        self.model = QStandardItemModel()
+
+        self.select_all_cb = QCheckBox('Check All')
+        self.select_all_cb.setChecked(True)
+        self.select_all_cb.setStyleSheet('margin-left: 5px; font: bold')
+        #self.select_all_cb.stateChanged.connect(lambda: selectAllCheckChanged(select_all_cb, model))
+        layout.addWidget(self.select_all_cb)
+
+        self.view = QListView()
+        self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.view.setSelectionMode(QAbstractItemView.NoSelection)
+        self.view.setSelectionRectVisible(False)
+
+        for layer in layerList:
+            item = QStandardItem(layer.name())
+            # item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+            # item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
+            item.setCheckable(True)
+            item.setSelectable(False)
+            item.setCheckState(QtCore.Qt.Checked)
+            self.model.appendRow(item)
+            self.selectedLayers.append(item)
+
+        self.view.setModel(self.model)
+
+        #view.clicked.connect(lambda: listviewCheckChanged(item, model, select_all_cb))
+
+        layout.addWidget(self.view)
+
+        self.setLayout(layout)
+        """if parent:
+            parent.setLayout(layout)
+        else:
+            window = QWidget()
+            window.setLayout(layout)"""
+        #window.show()
+
+    def selectAllCheckChanged(self, select_all_cb, model):
+        QgsMessageLog.logMessage("IN selectAllCheckChanged",
+                                 tag="TOMs panel")
+        for index in range(model.rowCount()):
+            item = model.item(index)
+            if item.isCheckable():
+                if select_all_cb.isChecked():
+                    item.setCheckState(QtCore.Qt.Checked)
+                    self.selectedLayers.append(item)
+                else:
+                    item.setCheckState(QtCore.Qt.Unchecked)
+                    self.selectedLayers.remove(item)
+
+        QgsMessageLog.logMessage("IN selectAllCheckChanged: len list {}".format(len(self.selectedLayers)),
+                                 tag="TOMs panel")
+
+    def listviewCheckChanged(self, model, select_all_cb):
+        ''' updates the select all checkbox based on the listview '''
+        # model = self.listview.model()
+        QgsMessageLog.logMessage("IN listviewCheckChanged",
+                                 tag="TOMs panel")
+        items = [model.item(index) for index in range(model.rowCount())]
+        if all(item.checkState() == QtCore.Qt.Checked for item in items):
+            select_all_cb.setTristate(False)
+            select_all_cb.setCheckState(QtCore.Qt.Checked)
+        elif any(item.checkState() == QtCore.Qt.Checked for item in items):
+            select_all_cb.setTristate(True)
+            select_all_cb.setCheckState(QtCore.Qt.PartiallyChecked)
+        else:
+            select_all_cb.setTristate(False)
+            select_all_cb.setCheckState(QtCore.Qt.Unchecked)
+
+    def updateSelectedLayers(self, index):
+        #QMessageBox.information(self.iface.mainWindow(), "debug", "IN updateSelectedLayers: {}".format(self.model.itemFromIndex(index)))
+        QgsMessageLog.logMessage("IN updateSelectedLayers: {}".format(index) ,
+                                 tag="TOMs panel")
+        item = self.model.itemFromIndex(index)
+        if item.checkState() == QtCore.Qt.Checked:
+            self.selectedLayers.append(item)
+        else:
+            self.selectedLayers.remove(item)
+
+    def getSelectedLayers(self):
+        return self.selectedLayers
+
