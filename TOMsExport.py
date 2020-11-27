@@ -66,15 +66,14 @@ from qgis.utils import iface
 from resources import *
 # Import the code for the dialog
 from TOMsExport_dialog import TOMsExportDialog
-from TOMs.core.TOMsGeometryElement import ElementGeometryFactory
+
 import os.path
 import time
 import datetime
 
+from TOMs.core.TOMsGeometryElement import ElementGeometryFactory
+from TOMs.core.TOMsMessageLog import TOMsMessageLog
 from TOMs.generateGeometryUtils import generateGeometryUtils
-
-# TODO: Deal with paths. Ideally want to have this plugin using the same folders as TOMs
-
 from TOMs.restrictionTypeUtilsClass import RestrictionTypeUtilsMixin
 
 class setupTableNames(QObject):
@@ -91,7 +90,7 @@ class setupTableNames(QObject):
 
         #RestrictionsLayers = QgsMapLayerRegistry.instance().mapLayersByName("RestrictionLayers")[0]
         self.TOMsExportLayerList = [["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
-                                        "GeometryID", "BaysWordingID", "RoadName", "USRN", "OpenDate",
+                                        "GeometryID", "AdditionalConditionID", "RoadName", "USRN", "OpenDate",
                                         "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" < 20', 'Linestring'],
                               ["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
                                         "GeometryID", "BaysWordingID", "RoadName", "USRN", "OpenDate",
@@ -106,8 +105,8 @@ class setupTableNames(QObject):
                             ["ParkingTariffAreas", ["id", "Name", "NoReturnTimeID", "MaxStayID", "TimePeriodID", "OpenDate"], '', 'Polygon']
                          ]
 
-        self.TOMsRequiredFields = ["GeometryID", "RestrictionTypeID", "RestType", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
-                                        "BaysWordingID", "RoadName", "USRN", "OpenDate",
+        self.TOMsRequiredFields = ["GeometryID", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
+                                        "AdditionalConditionID", "RoadName", "USRN", "OpenDate",
                                         "CPZ", "ParkingTariffArea", "Restriction_Length",   # for bays
                                    "NoWaitingTimeID", "NoLoadingTimeID",    # for lines
                                    "AreaPermitCode"  # for polygons
