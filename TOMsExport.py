@@ -46,6 +46,7 @@ from qgis.PyQt.QtCore import (
 )
 
 from qgis.core import (
+    Qgis,
     QgsExpressionContextUtils,
     QgsExpression,
     QgsFeatureRequest,
@@ -75,6 +76,7 @@ from TOMs.core.TOMsGeometryElement import ElementGeometryFactory
 from TOMs.core.TOMsMessageLog import TOMsMessageLog
 from TOMs.generateGeometryUtils import generateGeometryUtils
 from TOMs.restrictionTypeUtilsClass import RestrictionTypeUtilsMixin
+from TOMsExport.checkableMapLayerList import checkableMapLayerListCtrl, checkableMapLayerList
 
 class setupTableNames(QObject):
 
@@ -85,7 +87,7 @@ class setupTableNames(QObject):
         QObject.__init__(self)
         self.iface = iface
 
-        QgsMessageLog.logMessage("In setupTableNames.init ...", tag="TOMs panel")
+        TOMsMessageLog.logMessage("In setupTableNames.init ...", level=Qgis.Info)
         #self.proposalsManager = proposalsManager
 
         #RestrictionsLayers = QgsMapLayerRegistry.instance().mapLayersByName("RestrictionLayers")[0]
@@ -118,7 +120,7 @@ class setupTableNames(QObject):
 
     def getLayers(self):
 
-        QgsMessageLog.logMessage("In setupTableNames.getLayers ...", tag="TOMs panel")
+        TOMsMessageLog.logMessage("In setupTableNames.getLayers ...", level=Qgis.Info)
         found = True
 
         # Check for project being open
@@ -226,11 +228,11 @@ class TOMsExport:
 
         if logFilePath:
 
-            QgsMessageLog.logMessage("LogFilePath: " + str(logFilePath), tag="TOMs panel")
+            TOMsMessageLog.logMessage("LogFilePath: " + str(logFilePath), level=Qgis.Info)
 
             logfile = 'qgis_' + datetime.date.today().strftime("%Y%m%d") + '.log'
             self.filename = os.path.join(logFilePath, logfile)
-            QgsMessageLog.logMessage("Sorting out log file" + self.filename, tag="TOMs panel")
+            TOMsMessageLog.logMessage("Sorting out log file" + self.filename, level=Qgis.Info)
             QgsApplication.instance().messageLog().messageReceived.connect(self.write_log_message)"""
 
     # noinspection PyMethodMayBeStatic
@@ -344,13 +346,13 @@ class TOMsExport:
 
                 fileName = self.fileNameWidget.filePath()
                 # QMessageBox.information(self.iface.mainWindow(), "Message", ("Filename is ..." + str(fileName)))
-                QgsMessageLog.logMessage("Filename is ..." + str(fileName), tag="TOMs panel")
+                TOMsMessageLog.logMessage("Filename is ..." + str(fileName), level=Qgis.Info)
 
                 # Get list of all the layers that are required within the Geopackage
 
                 layerItemsList = self.layerList.getSelectedLayers()
                 for currLayerItem in layerItemsList:
-                    QgsMessageLog.logMessage("Processing {} ...".format(currLayerItem.text()), tag="TOMs panel")
+                    TOMsMessageLog.logMessage("Processing {} ...".format(currLayerItem.text()), level=Qgis.Info)
 
                     currLayer = QgsProject.instance().mapLayersByName(currLayerItem.text())[0]
 
@@ -363,7 +365,7 @@ class TOMsExport:
                                                   "ogr")
                         QgsProject.instance().addMapLayer(newLayerA)
 
-                QgsMessageLog.logMessage("******** FINSIHED ********", tag="TOMs panel")
+                TOMsMessageLog.logMessage("******** FINSIHED ********", level=Qgis.Info)
 
             #self.dlg.close()
 
@@ -434,15 +436,15 @@ class TOMsExportUtils():
         else:
             restrictionIterator = currLayer.getFeatures()
 
-        QgsMessageLog.logMessage("In processLayer - " + currLayer.name(), tag="TOMs panel")
+        TOMsMessageLog.logMessage("In processLayer - " + currLayer.name(), level=Qgis.Info)
 
         layerWkbType = currLayer.wkbType()
         outputLayersList = []
         #restrictionList = currLayer.getFeatures(request)
 
         for currRestriction in restrictionIterator:
-            QgsMessageLog.logMessage("In processLayer - geomID: {}".format(currRestriction.attribute("GeometryID")),
-                                     tag="TOMs panel")
+            TOMsMessageLog.logMessage("In processLayer - geomID: {}".format(currRestriction.attribute("GeometryID")),
+                                     level=Qgis.Info)
             restrictionGeometryWkbType = self.getRestrictionGeometryWkbType(currRestriction, layerWkbType)
             # check that we have a layer created
             outputLayerName = '{currLayerName}_{ext}'.format(currLayerName=currLayer.name(), ext=QgsWkbTypes.displayString(restrictionGeometryWkbType))
@@ -468,8 +470,8 @@ class TOMsExportUtils():
             newLayer.reload()
             newLayer.updateFields()
             newLayer.updateExtents()
-            QgsMessageLog.logMessage("In processLayer: layer: {}, count: {}".format(newLayerName, newLayer.featureCount()),
-                                     tag="TOMs panel")
+            TOMsMessageLog.logMessage("In processLayer: layer: {}, count: {}".format(newLayerName, newLayer.featureCount()),
+                                     level=Qgis.Info)
             QgsProject.instance().addMapLayer(newLayer)
             #canvas.setLayers([newLayer])
 
@@ -480,7 +482,7 @@ class TOMsExportUtils():
         #for newLayerName, newLayer in outputLayersList:
         write_result = False
 
-        QgsMessageLog.logMessage("In saveLayerToGpkg - {}, count:{}".format(newLayer.name(), newLayer.featureCount()), tag="TOMs panel")
+        TOMsMessageLog.logMessage("In saveLayerToGpkg - {}, count:{}".format(newLayer.name(), newLayer.featureCount()), level=Qgis.Info)
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.layerName = newLayer.name()
         options.driverName = "GPKG"
@@ -510,7 +512,7 @@ class TOMsExportUtils():
             options)
 
         if write_result != QgsVectorFileWriter.NoError:
-            QgsMessageLog.logMessage("Error: {errorNr} on {layer}: {txt}".format(errorNr=write_result, layer=newLayerName, txt=error_message), tag="TOMs panel")
+            TOMsMessageLog.logMessage("Error: {errorNr} on {layer}: {txt}".format(errorNr=write_result, layer=newLayerName, txt=error_message), level=Qgis.Info)
             #print(currLayer.name(), self.writer)
 
         return write_result
@@ -556,7 +558,7 @@ class TOMsExportUtils():
             if field.name() in reqFields:
                 status = newFields.append(field)
                 if status == False:
-                    QgsMessageLog.logMessage("Error adding " + field.name(), tag="TOMs panel")
+                    TOMsMessageLog.logMessage("Error adding " + field.name(), level=Qgis.Info)
 
         return newFields
 
@@ -564,7 +566,7 @@ class TOMsExportUtils():
 
         currCrs = currLayer.crs().authid()
         print ('---------- layer CRS: {}'.format(currCrs))
-        QgsMessageLog.logMessage('---------- layer CRS: {}'.format(currCrs), tag="TOMs panel")
+        TOMsMessageLog.logMessage('---------- layer CRS: {}'.format(currCrs), level=Qgis.Info)
         #currCrs = 'EPSG:27700'
 
         """newLayer = QgsVectorLayer("{type}?={crs}".format(type=geomType,
@@ -586,13 +588,13 @@ class TOMsExportUtils():
         fieldsToInclude = newLayer.fields()
         newFeature = QgsFeature(fieldsToInclude)
 
-        QgsMessageLog.logMessage('*** Nr new fields: {}; curr fields {}'.format(len(fieldsToInclude), len(currFields)),
-                                         tag="TOMs panel")
+        TOMsMessageLog.logMessage('*** Nr new fields: {}; curr fields {}'.format(len(fieldsToInclude), len(currFields)),
+                                         level=Qgis.Info)
 
         for field in currFields:
             if field in fieldsToInclude:
-                QgsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
-                                         tag="TOMs panel")
+                TOMsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
+                                         level=Qgis.Info)
                 newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
 
         #newGeom = currRestriction.geometry()  # use this for testing
@@ -671,8 +673,8 @@ class checkableMapLayerList(QWidget):
         #window.show()
 
     def selectAllCheckChanged(self, select_all_cb, model):
-        QgsMessageLog.logMessage("IN selectAllCheckChanged",
-                                 tag="TOMs panel")
+        TOMsMessageLog.logMessage("IN selectAllCheckChanged",
+                                 level=Qgis.Info)
         for index in range(model.rowCount()):
             item = model.item(index)
             if item.isCheckable():
@@ -683,14 +685,14 @@ class checkableMapLayerList(QWidget):
                     item.setCheckState(QtCore.Qt.Unchecked)
                     self.selectedLayers.remove(item)
 
-        QgsMessageLog.logMessage("IN selectAllCheckChanged: len list {}".format(len(self.selectedLayers)),
-                                 tag="TOMs panel")
+        TOMsMessageLog.logMessage("IN selectAllCheckChanged: len list {}".format(len(self.selectedLayers)),
+                                 level=Qgis.Info)
 
     def listviewCheckChanged(self, model, select_all_cb):
         ''' updates the select all checkbox based on the listview '''
         # model = self.listview.model()
-        QgsMessageLog.logMessage("IN listviewCheckChanged",
-                                 tag="TOMs panel")
+        TOMsMessageLog.logMessage("IN listviewCheckChanged",
+                                 level=Qgis.Info)
         items = [model.item(index) for index in range(model.rowCount())]
         if all(item.checkState() == QtCore.Qt.Checked for item in items):
             select_all_cb.setTristate(False)
@@ -704,8 +706,8 @@ class checkableMapLayerList(QWidget):
 
     def updateSelectedLayers(self, index):
         #QMessageBox.information(self.iface.mainWindow(), "debug", "IN updateSelectedLayers: {}".format(self.model.itemFromIndex(index)))
-        QgsMessageLog.logMessage("IN updateSelectedLayers: {}".format(index) ,
-                                 tag="TOMs panel")
+        TOMsMessageLog.logMessage("IN updateSelectedLayers: {}".format(index) ,
+                                 level=Qgis.Info)
         item = self.model.itemFromIndex(index)
         if item.checkState() == QtCore.Qt.Checked:
             self.selectedLayers.append(item)
