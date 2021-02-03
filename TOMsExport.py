@@ -346,15 +346,16 @@ class TOMsExport:
                 currLayer = QgsProject.instance().mapLayersByName(currLayerItem.text())[0]
 
                 outputLayersList = utils.processLayer(currLayer)
-                #status = utils.saveOutputLayers(outputlayersList, fileName)
-                for newLayerName, newLayer in outputLayersList:
-                    utils.saveLayerToGpkg(newLayer, fileName)
+                if outputLayersList:
+                    #status = utils.saveOutputLayers(outputlayersList, fileName)
+                    for newLayerName, newLayer in outputLayersList:
+                        utils.saveLayerToGpkg(newLayer, fileName)
 
-                    newLayerA = QgsVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
-                                              "ogr")
-                    QgsProject.instance().addMapLayer(newLayerA)
+                        newLayerA = QgsVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
+                                                  "ogr")
+                        QgsProject.instance().addMapLayer(newLayerA)
 
-            TOMsMessageLog.logMessage("******** FINSIHED ********", level=Qgis.Info)
+            TOMsMessageLog.logMessage("******** FINSIHED EXPORT ********", level=Qgis.Warning)
 
             #self.dlg.close()
 
@@ -444,11 +445,13 @@ class TOMsExportUtils():
         listFieldsToInclude = self.getFieldsForExportLayer(currLayer.name())
         TOMsMessageLog.logMessage("In processLayer - fields are {}".format(listFieldsToInclude), level=Qgis.Warning)
 
+        if not listFieldsToInclude:
+            reply = QMessageBox.information(None, "Information", "No fields found for layer {}".format(currLayer.name()), QMessageBox.Ok)
+            return None  # no details to add
+
         # take string and turn into fields
         fieldsToInclude = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
 
-        if len(fieldsToInclude) == 0:
-            return None  # no details to add
 
         # decide whether or not to use only current restrictions.
         if self.isThisTOMsLayer(currLayer) == True:
