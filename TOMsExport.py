@@ -346,15 +346,16 @@ class TOMsExport:
                 currLayer = QgsProject.instance().mapLayersByName(currLayerItem.text())[0]
 
                 outputLayersList = utils.processLayer(currLayer)
-                #status = utils.saveOutputLayers(outputlayersList, fileName)
-                for newLayerName, newLayer in outputLayersList:
-                    utils.saveLayerToGpkg(newLayer, fileName)
+                if outputLayersList:
+                    #status = utils.saveOutputLayers(outputlayersList, fileName)
+                    for newLayerName, newLayer in outputLayersList:
+                        utils.saveLayerToGpkg(newLayer, fileName)
 
-                    newLayerA = QgsVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
-                                              "ogr")
-                    QgsProject.instance().addMapLayer(newLayerA)
+                        newLayerA = QgsVectorLayer(fileName + "|layername=" + newLayerName, newLayerName,
+                                                  "ogr")
+                        QgsProject.instance().addMapLayer(newLayerA)
 
-            TOMsMessageLog.logMessage("******** FINSIHED ********", level=Qgis.Info)
+            TOMsMessageLog.logMessage("******** FINSIHED EXPORT ********", level=Qgis.Warning)
 
             #self.dlg.close()
 
@@ -444,14 +445,16 @@ class TOMsExportUtils():
         listFieldsToInclude = self.getFieldsForExportLayer(currLayer.name())
         TOMsMessageLog.logMessage("In processLayer - fields are {}".format(listFieldsToInclude), level=Qgis.Warning)
 
+        if not listFieldsToInclude:
+            reply = QMessageBox.information(None, "Information", "No fields found for layer {}".format(currLayer.name()), QMessageBox.Ok)
+            return None  # no details to add
+
         # take string and turn into fields
         fieldsToInclude = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
 
-        if len(fieldsToInclude) == 0:
-            return None  # no details to add
 
         # decide whether or not to use only current restrictions.
-        if self.isThisTOMsLayer(currLayer) == True:
+        if self.isThisTOMsLayerUsingCurrentFeatures(currLayer) == True:
             text = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL'
             exp = QgsExpression(text)
             request = QgsFeatureRequest(exp)
@@ -554,7 +557,7 @@ class TOMsExportUtils():
 
         return write_result
 
-    def isThisTOMsLayer(self, currLayer):
+    def isThisTOMsLayerUsingCurrentFeatures(self, currLayer):
         # Decide whether or not this is a TOMs layer.
         # Look for "OpenDate" and check whether or not there are values set
 
@@ -631,19 +634,31 @@ class TOMsExportUtils():
 
         TOMsMessageLog.logMessage('*** Nr new fields: {}; curr fields {}'.format(len(fieldsToInclude), len(currFields)),
                                          level=Qgis.Info)
+        geomShapeField = False
 
         for field in currFields:
+            TOMsMessageLog.logMessage("Checking field: {}".format(field.name()),
+                                      level=Qgis.Info)
             if field in fieldsToInclude:
                 TOMsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
                                          level=Qgis.Info)
                 newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
 
+            if field.name() == 'GeomShapeID':
+                geomShapeField = True
+
         #newGeom = currRestriction.geometry()  # use this for testing
 
+        currGeomWkbType = currRestriction.geometry().type()
 
-        newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
-
-        newFeature.setGeometry(newGeom)
+        if geomShapeField == True:
+            if currGeomWkbType == QgsWkbTypes.LineGeometry:
+                newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
+                newFeature.setGeometry(newGeom)
+            else:
+                newFeature.setGeometry(currRestriction.geometry())
+        else:
+            newFeature.setGeometry(currRestriction.geometry())
 
         result = newLayer.dataProvider().addFeature(newFeature)
         if result == False:
