@@ -153,7 +153,7 @@ class TOMsExportTest(unittest.TestCase):
         testProviderA.addFeatures([testFeature2])
 
         # check field called "OpenDate" does not exist
-        result = self.testClass.isThisTOMsLayer(testLayerA)
+        result = self.testClass.isThisTOMsLayerUsingCurrentFeatures(testLayerA)
         self.assertFalse(result)
 
         # check field called "OpenDate" does exist but is NULL
@@ -169,7 +169,7 @@ class TOMsExportTest(unittest.TestCase):
         testFeature3.setGeometry(testLineString2)
         testProviderB.addFeatures([testFeature3])
 
-        result = self.testClass.isThisTOMsLayer(testLayerB)
+        result = self.testClass.isThisTOMsLayerUsingCurrentFeatures(testLayerB)
         self.assertFalse(result)
 
         # check field called "OpenDate" does exist but is not NULL
@@ -181,7 +181,7 @@ class TOMsExportTest(unittest.TestCase):
         for field in testLayerB.fields():
             print ('+++ field: {}'.format(field.name()))
 
-        result = self.testClass.isThisTOMsLayer(testLayerB)
+        result = self.testClass.isThisTOMsLayerUsingCurrentFeatures(testLayerB)
         self.assertTrue(result)
 
     def test_setFieldsForTOMsExportLayer(self):

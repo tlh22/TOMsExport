@@ -454,7 +454,7 @@ class TOMsExportUtils():
 
 
         # decide whether or not to use only current restrictions.
-        if self.isThisTOMsLayer(currLayer) == True:
+        if self.isThisTOMsLayerUsingCurrentFeatures(currLayer) == True:
             text = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL'
             exp = QgsExpression(text)
             request = QgsFeatureRequest(exp)
@@ -557,7 +557,7 @@ class TOMsExportUtils():
 
         return write_result
 
-    def isThisTOMsLayer(self, currLayer):
+    def isThisTOMsLayerUsingCurrentFeatures(self, currLayer):
         # Decide whether or not this is a TOMs layer.
         # Look for "OpenDate" and check whether or not there are values set
 
@@ -643,10 +643,13 @@ class TOMsExportUtils():
 
         #newGeom = currRestriction.geometry()  # use this for testing
 
+        currGeomWkbType = currRestriction.geometry().type()
 
-        newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
-
-        newFeature.setGeometry(newGeom)
+        if currGeomWkbType == QgsWkbTypes.LineString or currGeomWkbType == QgsWkbTypes.MultiLineString:
+            newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
+            newFeature.setGeometry(newGeom)
+        else:
+            newFeature.setGeometry(currRestriction.geometry())
 
         result = newLayer.dataProvider().addFeature(newFeature)
         if result == False:
