@@ -634,20 +634,29 @@ class TOMsExportUtils():
 
         TOMsMessageLog.logMessage('*** Nr new fields: {}; curr fields {}'.format(len(fieldsToInclude), len(currFields)),
                                          level=Qgis.Info)
+        geomShapeField = False
 
         for field in currFields:
+            TOMsMessageLog.logMessage("Checking field: {}".format(field.name()),
+                                      level=Qgis.Info)
             if field in fieldsToInclude:
                 TOMsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
                                          level=Qgis.Info)
                 newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
 
+            if field.name() == 'GeomShapeID':
+                geomShapeField = True
+
         #newGeom = currRestriction.geometry()  # use this for testing
 
         currGeomWkbType = currRestriction.geometry().type()
 
-        if currGeomWkbType == QgsWkbTypes.LineString or currGeomWkbType == QgsWkbTypes.MultiLineString:
-            newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
-            newFeature.setGeometry(newGeom)
+        if geomShapeField == True:
+            if currGeomWkbType == QgsWkbTypes.LineGeometry:
+                newGeom = ElementGeometryFactory.getElementGeometry(currRestriction)
+                newFeature.setGeometry(newGeom)
+            else:
+                newFeature.setGeometry(currRestriction.geometry())
         else:
             newFeature.setGeometry(currRestriction.geometry())
 
