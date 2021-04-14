@@ -1,0 +1,104 @@
+# testing for relations - and obtaining lookups ...
+
+currLayer = QgsProject.instance().mapLayersByName("Bays")[0]
+selectedRestrictions = currLayer.selectedFeatures()
+currRestriction = selectedRestrictions[0]
+
+currFields = currLayer.fields()
+
+idx_TimePeriodID = currLayer.fields().indexFromName('TimePeriodID')
+
+relations = QgsProject.instance().relationManager().discoverRelations([], QgsProject.instance().mapLayers())
+
+def getVectorLayers(layers):
+    vectorLayers = []
+    for name, layerObj in layers.items():
+        #print (name, layerObj)
+        if layerObj.type() == QgsMapLayerType.VectorLayer:
+            vectorLayers.append(layerObj)
+    return vectorLayers
+
+vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
+
+relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
+
+relationsForCurrLayer = QgsProject.instance().relationManager().discoverRelations([], [currLayer])
+relationsForCurrLayer = currLayer.dataProvider().discoverRelations(vl, [])
+relationsForCurrLayer = QgsProject.instance().relationManager().referencingRelations(currLayer, [])
+
+relationsForCurrLayer = []
+for relation in relations:
+    if relation.referencingLayer() == currLayer:
+        print ("************** layer: {}".format(currLayer.name()))
+        #print ("referencinglayer: {}, referencingfields: {} resolve: {}".format(relation.referencingLayer(), relation.referencingFields(), relation.resolveReferencingField(relation.referencingFields()[0])))
+        #print ("referencedlayer: {}, referencedfields: {} resolve:{}".format(relation.referencedLayer(), relation.referencedFields(), relation.resolveReferencedField(relation.referencedFields()[0])))
+        print ("referencinglayer: {}, referencingfields: {}".format(relation.referencingLayer(), relation.referencingFields()))
+        print ("referencedlayer: {}, referencedfields: {}".format(relation.referencedLayer(), relation.referencedFields()))
+        #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
+        relationsForCurrLayer.append(relation)
+
+        relation.getReferencedFeature(currRestriction).attribute("Description")  # gives value of lookup
+
+        relation.resolveReferencedField (currLayer.fields().field(relation.referencingFields()[0]).name())  # give name of lookup field
+
+    lookupFeature = relation.getReferencedFeature(currRestriction)
+    lookupFeature.attribute("Description")
+
+
+relation = relations[1]
+relation.referencingLayer()
+relation.referencingFields()
+relation.referencedLayer()
+relation.referencedFields()
+
+relation.fieldPairs()
+
+lookupFeature = relation.getReferencedFeature(currRestriction)
+lookupFeature.attribute("Description")
+
+checkLayers = [QgsProject.instance().mapLayersByName("CommunicationCabinetTypes")[0], QgsProject.instance().mapLayersByName("AssetConditionTypes")[0]]
+currLayer = QgsProject.instance().mapLayersByName("CommunicationCabinets")[0]
+dp = currLayer.dataProvider()
+rels = dp.discoverRelations(currLayer, checkLayers)
+
+
+
+---
+
+class TOMsFieldLookups()
+
+def init
+
+def getAllRelations(self):
+
+
+
+layers = QgsProject.instance().mapLayers()
+
+# https://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
+
+SELECT conname,
+  pg_catalog.pg_get_constraintdef(r.oid, true) as condef
+FROM pg_catalog.pg_constraint r
+WHERE r.conrelid = 'myschema.mytable'::regclass AND r.contype = 'f' ORDER BY 1
+
+
+enum_list = list(map(int,  QgsFieldConstraints.Constraint()))
+print(enum_list) # prints [1, 2]
+
+
+for checkField in checkFieldList:
+    #print (checkField)
+    try:
+        #TOMsMessageLog.logMessage('{} -- A: {}; B: {}'.format(checkField, restrictionA[checkField], restrictionB[checkField]), level=Qgis.Warning)
+        if restrictionA[checkField] is None and restrictionB[checkField] is None:
+            test = True
+        else:
+            test = restrictionA[checkField] == restrictionB[checkField]
+        print ('{} -- A: {}; B: {}'.format(checkField, restrictionA[checkField], restrictionB[checkField]))
+    except Exception:
+        print ('Problem with {} ...'.format(checkField))
+        test = False
+    print ('Result is {}'.format(test))
+
+
