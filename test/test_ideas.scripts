@@ -1,0 +1,195 @@
+# testing for relations - and obtaining lookups ...
+
+currLayer = QgsProject.instance().mapLayersByName("Bays")[0]
+selectedRestrictions = currLayer.selectedFeatures()
+currRestriction = selectedRestrictions[0]
+
+currFields = currLayer.fields()
+
+idx_TimePeriodID = currLayer.fields().indexFromName('TimePeriodID')
+
+relations = QgsProject.instance().relationManager().discoverRelations([], QgsProject.instance().mapLayers())
+
+def getVectorLayers(layers):
+    vectorLayers = []
+    for name, layerObj in layers.items():
+        #print (name, layerObj)
+        if layerObj.type() == QgsMapLayerType.VectorLayer:
+            vectorLayers.append(layerObj)
+    return vectorLayers
+
+vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
+
+relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
+
+relationsForCurrLayer = QgsProject.instance().relationManager().discoverRelations([], [currLayer])
+relationsForCurrLayer = currLayer.dataProvider().discoverRelations(vl, [])
+relationsForCurrLayer = QgsProject.instance().relationManager().referencingRelations(currLayer, [])
+
+relationsForCurrLayer = []
+for relation in relations:
+    if relation.referencingLayer() == currLayer:
+        print ("************** layer: {}".format(currLayer.name()))
+        #print ("referencinglayer: {}, referencingfields: {} resolve: {}".format(relation.referencingLayer(), relation.referencingFields(), relation.resolveReferencingField(relation.referencingFields()[0])))
+        #print ("referencedlayer: {}, referencedfields: {} resolve:{}".format(relation.referencedLayer(), relation.referencedFields(), relation.resolveReferencedField(relation.referencedFields()[0])))
+        print ("referencinglayer: {}, referencingfields: {}".format(relation.referencingLayer(), relation.referencingFields()))
+        print ("referencedlayer: {}, referencedfields: {}".format(relation.referencedLayer(), relation.referencedFields()))
+        #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
+        relationsForCurrLayer.append(relation)
+
+        relation.getReferencedFeature(currRestriction).attribute("Description")  # gives value of lookup
+
+        relation.resolveReferencedField (currLayer.fields().field(relation.referencingFields()[0]).name())  # give name of lookup field
+
+    lookupFeature = relation.getReferencedFeature(currRestriction)
+    lookupFeature.attribute("Description")
+
+
+relation = relations[1]
+relation.referencingLayer()
+relation.referencingFields()
+relation.referencedLayer()
+relation.referencedFields()
+
+relation.fieldPairs()
+
+lookupFeature = relation.getReferencedFeature(currRestriction)
+lookupFeature.attribute("Description")
+
+checkLayers = [QgsProject.instance().mapLayersByName("CommunicationCabinetTypes")[0], QgsProject.instance().mapLayersByName("AssetConditionTypes")[0]]
+currLayer = QgsProject.instance().mapLayersByName("CommunicationCabinets")[0]
+dp = currLayer.dataProvider()
+rels = dp.discoverRelations(currLayer, checkLayers)
+
+
+
+---
+
+class TOMsFieldLookups()
+
+def init
+
+def getAllRelations(self):
+
+
+
+layers = QgsProject.instance().mapLayers()
+
+# https://stackoverflow.com/questions/1152260/postgres-sql-to-list-table-foreign-keys
+
+SELECT conname,
+  pg_catalog.pg_get_constraintdef(r.oid, true) as condef
+FROM pg_catalog.pg_constraint r
+WHERE r.conrelid = 'myschema.mytable'::regclass AND r.contype = 'f' ORDER BY 1
+
+
+enum_list = list(map(int,  QgsFieldConstraints.Constraint()))
+print(enum_list) # prints [1, 2]
+
+
+for checkField in checkFieldList:
+    #print (checkField)
+    try:
+        #TOMsMessageLog.logMessage('{} -- A: {}; B: {}'.format(checkField, restrictionA[checkField], restrictionB[checkField]), level=Qgis.Warning)
+        if restrictionA[checkField] is None and restrictionB[checkField] is None:
+            test = True
+        else:
+            test = restrictionA[checkField] == restrictionB[checkField]
+        print ('{} -- A: {}; B: {}'.format(checkField, restrictionA[checkField], restrictionB[checkField]))
+    except Exception:
+        print ('Problem with {} ...'.format(checkField))
+        test = False
+    print ('Result is {}'.format(test))
+
+
+
+###--- Used from here
+currLayer = QgsProject.instance().mapLayersByName("Bays")[0]
+selectedRestrictions = currLayer.selectedFeatures()
+currRestriction = selectedRestrictions[0]
+
+
+def getVectorLayers(layers):
+    vectorLayers = []
+    for name, layerObj in layers.items():
+        #print (name, layerObj)
+        if layerObj.type() == QgsMapLayerType.VectorLayer:
+            vectorLayers.append(layerObj)
+    return vectorLayers
+
+
+def getRelationsForCurrLayer(currLayer):
+    print("getRelationsForCurrLayer for {}".format(currLayer.name()))
+    vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
+    relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
+    relationsForCurrLayer = []
+    for relation in relations:
+        if relation.referencingLayer() == currLayer:
+            relationsForCurrLayer.append(relation)
+            print ("referencinglayer: {}, referencingfields: {}".format(relation.referencingLayer(), relation.referencingFields()))
+            print ("referencedlayer: {}, referencedfields: {}".format(relation.referencedLayer(), relation.referencedFields()))
+            #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
+    print("getRelationsForCurrLayer for {}. relationsForCurrLayer {}".format(currLayer.name(), relationsForCurrLayer))
+    return relationsForCurrLayer
+
+
+def getLookupDescription(relation, currRestriction):
+    # possibly recursive ...
+    attrs = relation.getReferencedFeature(currRestriction).attributes()
+    print ("In getLookupDescription. Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
+        currRestriction.fields().field(relation.referencingFields()[0]).name(), \
+        currRestriction.attribute(relation.referencingFields()[0])))
+    fieldValue = None
+    # check to see if the initial value is actually NULL
+    if currRestriction.attribute(relation.referencingFields()[0]) != qgis.core.NULL:
+        print ("Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), relation.referencedLayer().name()))
+        try:
+            fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
+        except KeyError as e:
+            print ("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()))
+            # check to see whether or not there are any further relations that might allow the lookup ...
+            relationsForReferencedLayer = getRelationsForCurrLayer(relation.referencedLayer())
+            # need to choose the relation for the field we are considering ...
+            for newRelation in relationsForReferencedLayer:
+                if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+                    #if len(relationsForReferencedLayer) == 1:  # only allow one further relation
+                    checkRestriction = relation.getReferencedFeature(currRestriction)
+                    print ("In getLookupDescription (3). Found relation for {} in {} ... {} on {}".format(
+                            relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                            relation.referencedLayer().name(), \
+                            newRelation.getReferencedFeature(checkRestriction).fields().field(newRelation.referencedFields()[0]).name(), \
+                            newRelation.referencedLayer().name() \
+                            ))
+                    if len (checkRestriction.fields()) > 0:
+                        print ("In getLookupDescription: checking {}: {}".format(relation.referencedLayer().name(), relation.getReferencedFeature(currRestriction).attribute(relation.referencedFields()[0])))
+                        fieldValue = getLookupDescription(newRelation, checkRestriction)
+        # return relation.getReferencedFeature(currRestriction).attribute("Description")  # may need to a better way to lookup value
+    return fieldValue
+
+
+
+### use to show relations
+
+vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
+relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
+
+relationsForCurrLayer = []
+for relation in relations:
+    if relation.referencingLayer() == currLayer:
+        print ("************** layer: {}".format(currLayer.name()))
+        #print ("referencinglayer: {}, referencingfields: {} resolve: {}".format(relation.referencingLayer(), relation.referencingFields(), relation.resolveReferencingField(relation.referencingFields()[0])))
+        #print ("referencedlayer: {}, referencedfields: {} resolve:{}".format(relation.referencedLayer(), relation.referencedFields(), relation.resolveReferencedField(relation.referencedFields()[0])))
+        print ("referencinglayer: {}, referencingfields: {}".format(relation.referencingLayer(), relation.referencingFields()))
+        print ("referencedlayer: {}, referencedfields: {}".format(relation.referencedLayer(), relation.referencedFields()))
+        #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
+        relationsForCurrLayer.append(relation)
+
+### use to show values for feature
+for field in currRestriction.fields():
+    fieldValue = currRestriction.attribute(field.name())
+    for relation in relationsForCurrLayer:
+        if relation.referencingFields()[0] == currRestriction.fieldNameIndex(field.name()):
+            fieldValue = getLookupDescription(relation, currRestriction)
+            break
+    print ("Field: {}, value: {}".format(field.name(), fieldValue))
+

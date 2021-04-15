@@ -57,7 +57,7 @@ from qgis.core import (
     QgsVectorFileWriter,
     QgsApplication,
     QgsVectorLayer,
-    QgsFields, QgsDataSourceUri, QgsWkbTypes
+    QgsFields, QgsDataSourceUri, QgsWkbTypes, QgsMapLayerType, NULL
 )
 
 from qgis.gui import QgsFileWidget, QgisInterface
@@ -78,117 +78,6 @@ from TOMs.generateGeometryUtils import generateGeometryUtils
 from TOMs.restrictionTypeUtilsClass import RestrictionTypeUtilsMixin, TOMsLayers, TOMsConfigFile
 from TOMsExport.checkableMapLayerList import checkableMapLayerListCtrl, checkableMapLayerList
 #from .restrictionTypeUtilsClass import RestrictionTypeUtilsMixin, TOMsLayers, TOMsConfigFile
-
-"""
-class setupTableNames(QObject):
-
-    TOMsLayersNotFound = pyqtSignal()
-"""
-""" signal will be emitted with there is a problem with opening TOMs - typically a layer missing """
-"""
-    def __init__(self, iface):
-        QObject.__init__(self)
-        self.iface = iface
-
-        TOMsMessageLog.logMessage("In setupTableNames.init ...", level=Qgis.Info)
-        #self.proposalsManager = proposalsManager
-
-        #RestrictionsLayers = QgsMapLayerRegistry.instance().mapLayersByName("RestrictionLayers")[0]
-        self.TOMsExportLayerList = [["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
-                                        "GeometryID", "AdditionalConditionID", "RoadName", "USRN", "OpenDate",
-                                        "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" < 20', 'Linestring'],
-                              ["Bays", ["Length", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
-                                        "GeometryID", "BaysWordingID", "RoadName", "USRN", "OpenDate",
-                                        "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" > 20', 'Polygon'],
-                              ["Lines", ["Length", "RestrictionTypeID", "NoWaitingTimeID", "NoLoadingTimeID", "GeometryID",
-                                         "RoadName", "USRN", "OpenDate", "CPZ", "ParkingTariffArea"], 'AND "GeomShapeID" > 0', 'Linestring'],
-                         #"Signs",
-                            ["RestrictionPolygons", ["RestrictionTypeID", "OpenDate", "USRN", "RoadName",
-                                                     "GeometryID", "NoWaitingTimeID", "NoLoadingTimeID",
-                                                     "TimePeriodID", "AreaPermitCode", "CPZ"], '', 'Polygon'],
-                            ["CPZs", ["WaitingTimeID", "CPZ", "OpenDate", "GeometryID"], '', 'Polygon'],
-                            ["ParkingTariffAreas", ["id", "Name", "NoReturnTimeID", "MaxStayID", "TimePeriodID", "OpenDate"], '', 'Polygon']
-                         ]
-
-        self.TOMsRequiredFields = ["GeometryID", "RestrictionTypeID", "NrBays", "TimePeriodID", "PayTypeID", "MaxStayID", "NoReturnID",
-                                        "AdditionalConditionID", "RoadName", "USRN", "OpenDate",
-                                        "CPZ", "ParkingTariffArea", "Restriction_Length",   # for bays
-                                   "NoWaitingTimeID", "NoLoadingTimeID",    # for lines
-                                   "AreaPermitCode"  # for polygons
-                                   ]
-        self.TOMsLayerDict = {}
-
-    def getRequiredFields(self):
-        return self.TOMsRequiredFields
-
-    def getLayers(self):
-
-        TOMsMessageLog.logMessage("In setupTableNames.getLayers ...", level=Qgis.Info)
-        found = True
-
-        # Check for project being open
-        project = QgsProject.instance()
-
-        if len(project.fileName()) == 0:
-            QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Project not yet open"))
-            found = False
-
-        else:
-
-            for layer in self.TOMsExportLayerList:
-                if QgsProject.instance().mapLayersByName(layer[0]):
-                    self.TOMsLayerDict[layer[0]] = QgsProject.instance().mapLayersByName(layer[0])[0]
-                else:
-                    QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table " + layer + " is not present"))
-                    found = False
-                    break
-"""
-
-""" ***
-            if QgsProject.instance().mapLayersByName("Bays"):
-                self.BAYS = QgsProject.instance().mapLayersByName("Bays")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table Bays is not present"))
-                found = False
-
-            if QgsProject.instance().mapLayersByName("Lines"):
-                self.LINES = QgsProject.instance().mapLayersByName("Lines")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table Lines is not present"))
-                found = False
-
-            if QgsProject.instance().mapLayersByName("Signs"):
-                self.SIGNS = QgsProject.instance().mapLayersByName("Signs")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table Signs is not present"))
-                found = False
-
-            if QgsProject.instance().mapLayersByName("RestrictionPolygons"):
-                self.RESTRICTION_POLYGONS = QgsProject.instance().mapLayersByName("RestrictionPolygons")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table RestrictionPolygons is not present"))
-                found = False
-
-            if QgsProject.instance().mapLayersByName("CPZs"):
-                self.CPZs = QgsProject.instance().mapLayersByName("CPZs")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table CPZs is not present"))
-                found = False
-
-            if QgsProject.instance().mapLayersByName("ParkingTariffAreas"):
-                self.PARKING_TARIFF_AREAS = QgsProject.instance().mapLayersByName("ParkingTariffAreas")[0]
-            else:
-                QMessageBox.information(self.iface.mainWindow(), "ERROR", ("Table ParkingTariffAreas is not present"))
-                found = False
-"""
-"""
-        # TODO: need to deal with any errors arising ...
-
-        if found == False:
-            self.TOMsLayersNotFound.emit()
-
-        return self.TOMsExportLayerList
-"""
 
 class TOMsExport:
     """QGIS Plugin Implementation."""
@@ -298,8 +187,8 @@ class TOMsExport:
 
         utils = TOMsExportUtils(self.iface, self.TOMsConfigFileObject)
 
-        #if self.first_start == True:
-        #    self.first_start = False
+        if self.first_start == True:
+            self.first_start = False
 
         self.tableNames = TOMsLayers(self.iface)
         #self.tableNames = setupTableNames(self.iface)
@@ -368,9 +257,6 @@ class TOMsExport:
         self.generalLayout = QVBoxLayout()
 
         layerGroup = QGroupBox("Choose layers to export")
-        # test = QLabel()
-        # test.setText("Choose layers to export and confirm location of output")
-        # self.generalLayout.addWidget(test)
 
         # add map layer list
         self.layerList = checkableMapLayerList()
@@ -409,6 +295,13 @@ class TOMsExportUtils():
         self.iface = iface
         self.configFileObject = configFileObject
 
+        self.includeLookupValues = False
+        if self.getIncludeLookupValues():
+            self.includeLookupValues = True
+        TOMsMessageLog.logMessage(
+                "In TOMsExportUtils.init. includeLookupValue is {}".format(self.includeLookupValues),
+                level=Qgis.Warning)
+
     def getTOMsExportLayerList(self):
         layers = self.configFileObject.getTOMsConfigElement('TOMsExport', 'LayersToExport')
         if layers:
@@ -426,6 +319,18 @@ class TOMsExportUtils():
         value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'BaysAsPolygons')
         if value == 'True':
             return True
+        return False
+
+    def getResetNameValue(self):
+        value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'ResetNameValue')
+        if value:
+            return value
+        return None
+
+    def getIncludeLookupValues(self):
+        value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'IncludeLookupValues')
+        if value:
+            return value
         return False
 
     def getFieldsForExportLayer(self, layerName):
@@ -451,7 +356,6 @@ class TOMsExportUtils():
 
         # take string and turn into fields
         fieldsToInclude = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
-
 
         # decide whether or not to use only current restrictions.
         if self.isThisTOMsLayerUsingCurrentFeatures(currLayer) == True:
@@ -489,7 +393,7 @@ class TOMsExportUtils():
             #print ('---- layerName: {}'.format(outputLayerName))
             try:
                 outputLayer = dict(outputLayersList)[outputLayerName]
-            except KeyError:
+            except KeyError as e:
                 outputLayer = self.prepareNewLayer (currLayer, outputLayerName, restrictionGeometryWkbType, fieldsToInclude)
 
                 #print('Fields in output: {}'.format(len(outputLayer.fields())))
@@ -498,13 +402,13 @@ class TOMsExportUtils():
                 #print('- Appending --- layerName: {}'.format(outputLayerName))
                 #outputLayer.startEditing()
 
-            result = self.processRestriction(currRestriction, outputLayer)
+            result = self.processRestriction(currLayer, currRestriction, outputLayer)
             if result == False:
                 reply = QMessageBox.information(None, "Information", "failure to write to layer.", QMessageBox.Ok)
                 TOMsMessageLog.logMessage(
                     "In processLayer: failure to write to layer ...",
                     level=Qgis.Info)
-                ##break
+                break
 
         for newLayerName, newLayer in outputLayersList:
             newLayer.reload()
@@ -546,6 +450,8 @@ class TOMsExportUtils():
         """ This approach is depreciated. 
             New approach is to use .create() function to create writer and then addFeatures(). 
             However, I can't quite make it work. There is something with addfeatures that doesn't work ... """
+        # TODO: check that using dataprovider when using addFeatures ...
+
         write_result, error_message = QgsVectorFileWriter.writeAsVectorFormat(
             newLayer,
             fileName,
@@ -586,7 +492,15 @@ class TOMsExportUtils():
 
         if layerGeomWkbType == QgsWkbTypes.LineString or layerGeomWkbType == QgsWkbTypes.MultiLineString:
             restrictionGeometryWkbType = QgsWkbTypes.MultiLineString
-            geomShape = currRestriction.attribute("GeomShapeID")
+
+            # deal with non-TOMs layers
+            try:
+                geomShape = currRestriction.attribute("GeomShapeID")
+            except KeyError as e:
+                TOMsMessageLog.logMessage("In TOMsGeometryElement.init: GeomShapeID not present {}".format(e),
+                                          level=Qgis.Info)
+                return layerGeomWkbType
+
             if geomShape > 20:
                 restrictionGeometryWkbType = QgsWkbTypes.MultiPolygon
 
@@ -597,19 +511,63 @@ class TOMsExportUtils():
         currFields = currLayer.fields()
         newFields = QgsFields()
 
+        relationsForCurrLayer = self.getRelationsForCurrLayer(currLayer)
+
         """ Loop through all the fields in currLayer and add as appropriate"""
         for field in currFields:
             if field.name() in reqFields:
+                # Check whether or not this is a lookup field
+                if self.includeLookupValues:
+                    fieldType = self.getLookupFieldType(currFields.indexFromName(field.name()), relationsForCurrLayer)
+                    if fieldType:
+                        field.setType(fieldType)
+                        TOMsMessageLog.logMessage("Setting  {} to {}".format(field.name(), fieldType), level=Qgis.Warning)
                 status = newFields.append(field)
                 if status == False:
-                    TOMsMessageLog.logMessage("Error adding " + field.name(), level=Qgis.Info)
+                    TOMsMessageLog.logMessage("Error adding " + field.name(), level=Qgis.Warning)
 
         return newFields
+
+    def getLookupFieldType(self, idxField, relationsForCurrLayer):
+        # returns field details with datatype of lookup
+
+        fieldType = None
+
+        if len(relationsForCurrLayer) > 0:
+            # check to see if field has a lookup
+            for relation in relationsForCurrLayer:
+                if relation.referencingFields()[0] == idxField:
+                    TOMsMessageLog.logMessage(
+                        "In getLookupFieldType: checking field details for idx {} on {}".format(
+                            idxField, relation.referencingLayer().name()),
+                        level=Qgis.Warning)
+                    try:
+                        lookupField = relation.referencedLayer().fields().field("Description")  # this is the field that we will use for export
+                        # change data type for this field
+                        fieldType = lookupField.type()
+                    except KeyError as e:
+                        TOMsMessageLog.logMessage(
+                            "In setFieldsForTOMsExportLayer: lookup field error for {}: {}. {}".format(
+                                idxField, relation.referencedLayer().name(), e),
+                            level=Qgis.Warning)
+                        relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
+                        """if len(relationsForReferencedLayer) == 1:  # only allow further check for simple (one field) relations
+                            fieldType = self.getLookupFieldType(relation.referencedFields()[0], relationsForReferencedLayer)"""
+
+                        # need to choose the relation for the field we are considering ...
+                        for newRelation in relationsForReferencedLayer:
+                            if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+                                fieldType = self.getLookupFieldType(newRelation.referencingFields()[0], relationsForReferencedLayer)
+                                break
+
+                    break
+
+        return fieldType
 
     def prepareNewLayer(self, currLayer, newLayerName, geomWkbType, reqFields):
 
         currCrs = currLayer.crs().authid()
-        print ('---------- layer CRS: {}'.format(currCrs))
+        #print ('---------- layer CRS: {}'.format(currCrs))
         TOMsMessageLog.logMessage('---------- layer CRS: {}'.format(currCrs), level=Qgis.Info)
         #currCrs = 'EPSG:27700'
 
@@ -626,7 +584,7 @@ class TOMsExportUtils():
 
         return newLayer
 
-    def processRestriction(self, currRestriction, newLayer):
+    def processRestriction(self, currLayer, currRestriction, newLayer):
 
         currFields = currRestriction.fields()
         fieldsToInclude = newLayer.fields()
@@ -636,13 +594,24 @@ class TOMsExportUtils():
                                          level=Qgis.Info)
         geomShapeField = False
 
-        for field in currFields:
+        relationsForCurrLayer = self.getRelationsForCurrLayer(currLayer)  # could move this up a level ...
+
+        for field in fieldsToInclude:
             TOMsMessageLog.logMessage("Checking field: {}".format(field.name()),
                                       level=Qgis.Info)
-            if field in fieldsToInclude:
-                TOMsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
+            # fields for lookups will not match due to differences in data type
+            TOMsMessageLog.logMessage("Adding " + field.name() + ":" + str(currRestriction.attribute(field.name())),
                                          level=Qgis.Info)
-                newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
+
+            # TODO: deal with lookup values ...
+            fieldValue = self.getFieldValues(currRestriction, field, relationsForCurrLayer)
+
+            # if "name" field - and this is initial export, change to provided value
+            if field.name() == 'CreatePerson' or field.name() == 'LastUpdatePerson':
+                fieldValue = self.getResetNameValue()
+
+            #newFeature.setAttribute(field.name(), currRestriction.attribute(field.name()))
+            newFeature.setAttribute(field.name(), fieldValue)
 
             if field.name() == 'GeomShapeID':
                 geomShapeField = True
@@ -665,6 +634,95 @@ class TOMsExportUtils():
             TOMsMessageLog.logMessage("In processRestriction. Error: {}".format(newLayer.dataProvider().errors()),
                                       level=Qgis.Warning)
         return result
+
+    def getVectorLayers(self, layers):
+        vectorLayers = []
+        for name, layerObj in layers.items():
+            # print (name, layerObj)
+            if layerObj.type() == QgsMapLayerType.VectorLayer:
+                vectorLayers.append(layerObj)
+        return vectorLayers
+
+    def getRelationsForCurrLayer(self, currLayer):
+
+        vectorLayers = self.getVectorLayers(QgsProject.instance().mapLayers())
+        relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
+
+        relationsForCurrLayer = []
+
+        for relation in relations:
+            if relation.referencingLayer() == currLayer:
+                relationsForCurrLayer.append(relation)
+                #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
+
+        return relationsForCurrLayer
+
+    def getFieldValues(self, currRestriction, field, relationsForCurrLayer):
+
+        TOMsMessageLog.logMessage(
+            "In getFieldValues ... ".format(field.name()),
+            level=Qgis.Info)
+
+        fieldValue = currRestriction.attribute(field.name())
+
+        # deal with lookups
+        if self.includeLookupValues:
+
+            if len(relationsForCurrLayer) > 0:
+
+                # check to see if field has a lookup
+                for relation in relationsForCurrLayer:
+                    if relation.referencingFields()[0] == currRestriction.fieldNameIndex(field.name()):
+                        fieldValue = self.getLookupDescription(relation, currRestriction)
+                        break  # assume only one field
+
+        return fieldValue
+
+    def getLookupDescription(self, relation, currRestriction):
+        # possibly recursive ...
+
+        TOMsMessageLog.logMessage("In getLookupDescription (1). Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
+            currRestriction.fields().field(relation.referencingFields()[0]).name(), \
+            currRestriction.attribute(relation.referencingFields()[0])), level=Qgis.Warning)
+
+        fieldValue = None
+
+        # check to see if the initial value is actually NULL
+
+        if currRestriction.attribute(relation.referencingFields()[0]) != NULL:
+
+            TOMsMessageLog.logMessage("In getLookupDescription (2). Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                                                                      relation.referencedLayer().name()), level=Qgis.Warning)
+
+            try:
+                fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
+            except KeyError as e:
+
+                TOMsMessageLog.logMessage("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()), level=Qgis.Warning)
+
+                # check to see whether or not there are any further relations that might allow the lookup ...
+                relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
+
+                # need to choose the relation for the field we are considering ...
+                for newRelation in relationsForReferencedLayer:
+                    if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+
+                        checkRestriction = relation.getReferencedFeature(currRestriction)
+
+                        TOMsMessageLog.logMessage("In getLookupDescription (3). Found relation for {} in {} ... {} on {}".format(
+                            relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                            relation.referencedLayer().name(), \
+                            newRelation.getReferencedFeature(checkRestriction).fields().field(newRelation.referencedFields()[0]).name(), \
+                            newRelation.referencedLayer().name() \
+                            ), level=Qgis.Warning)
+
+                        if len (checkRestriction.fields()) > 0:
+                            TOMsMessageLog.logMessage("In getLookupDescription (4): Checking {}: {}".format(newRelation.referencedLayer().name(), \
+                                                               newRelation.getReferencedFeature(checkRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Warning)
+                            fieldValue = self.getLookupDescription(newRelation, checkRestriction)
+
+        return fieldValue
+
 
 class checkableMapLayerListCtrl:
     """PyCalc Controller class."""
