@@ -551,8 +551,6 @@ class TOMsExportUtils():
                                 idxField, relation.referencedLayer().name(), e),
                             level=Qgis.Warning)
                         relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
-                        """if len(relationsForReferencedLayer) == 1:  # only allow further check for simple (one field) relations
-                            fieldType = self.getLookupFieldType(relation.referencedFields()[0], relationsForReferencedLayer)"""
 
                         # need to choose the relation for the field we are considering ...
                         for newRelation in relationsForReferencedLayer:
@@ -683,7 +681,7 @@ class TOMsExportUtils():
 
         TOMsMessageLog.logMessage("In getLookupDescription (1). Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
             currRestriction.fields().field(relation.referencingFields()[0]).name(), \
-            currRestriction.attribute(relation.referencingFields()[0])), level=Qgis.Warning)
+            currRestriction.attribute(relation.referencingFields()[0])), level=Qgis.Info)
 
         fieldValue = None
 
@@ -692,13 +690,13 @@ class TOMsExportUtils():
         if currRestriction.attribute(relation.referencingFields()[0]) != NULL:
 
             TOMsMessageLog.logMessage("In getLookupDescription (2). Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
-                                                                      relation.referencedLayer().name()), level=Qgis.Warning)
+                                                                      relation.referencedLayer().name()), level=Qgis.Info)
 
             try:
                 fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
             except KeyError as e:
 
-                TOMsMessageLog.logMessage("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()), level=Qgis.Warning)
+                TOMsMessageLog.logMessage("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()), level=Qgis.Info)
 
                 # check to see whether or not there are any further relations that might allow the lookup ...
                 relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
@@ -714,11 +712,11 @@ class TOMsExportUtils():
                             relation.referencedLayer().name(), \
                             newRelation.getReferencedFeature(checkRestriction).fields().field(newRelation.referencedFields()[0]).name(), \
                             newRelation.referencedLayer().name() \
-                            ), level=Qgis.Warning)
+                            ), level=Qgis.Info)
 
                         if len (checkRestriction.fields()) > 0:
                             TOMsMessageLog.logMessage("In getLookupDescription (4): Checking {}: {}".format(newRelation.referencedLayer().name(), \
-                                                               newRelation.getReferencedFeature(checkRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Warning)
+                                                               newRelation.getReferencedFeature(checkRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Info)
                             fieldValue = self.getLookupDescription(newRelation, checkRestriction)
 
         return fieldValue
