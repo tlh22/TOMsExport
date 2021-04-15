@@ -390,6 +390,15 @@ class TOMsExportTest(unittest.TestCase):
         self.assertEqual(len(outputLayersList), 1)
         self.assertEqual(len(outputLayersList[0][1].fields()), 2)
 
+        # TODO: Need to include tests for relations - finding lookup fields and returning values ...
+        """ Cases are:
+        relation does not exist
+        relation exists and has value
+        relation exists and does not have value
+        null value within lookup
+        """
+
+
 if __name__ == "__main__":
     suite = unittest.makeSuite(TOMsExportTest)
     runner = unittest.TextTestRunner(verbosity=2)

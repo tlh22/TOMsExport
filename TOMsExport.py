@@ -57,7 +57,7 @@ from qgis.core import (
     QgsVectorFileWriter,
     QgsApplication,
     QgsVectorLayer,
-    QgsFields, QgsDataSourceUri, QgsWkbTypes, QgsMapLayerType
+    QgsFields, QgsDataSourceUri, QgsWkbTypes, QgsMapLayerType, NULL
 )
 
 from qgis.gui import QgsFileWidget, QgisInterface
@@ -518,28 +518,45 @@ class TOMsExportUtils():
             if field.name() in reqFields:
                 # Check whether or not this is a lookup field
                 if self.includeLookupValues:
-                    if len(relationsForCurrLayer) > 0:
-                        # check to see if field has a lookup
-                        for relation in relationsForCurrLayer:
-                            if relation.referencingFields()[0] == currFields.indexFromName(field.name()):
-                                try:
-                                    lookupField = relation.referencedLayer().fields().field("Description")  # this is the field that we will use for export
-                                    # change data type for this field
-                                    field.setType(lookupField.type())
-                                except KeyError as e:
-                                    TOMsMessageLog.logMessage(
-                                        "In setFieldsForTOMsExportLayer: lookup field error for {}: {}. {}".format(
-                                            field.name(), relation.referencedLayer().name(), e),
-                                        level=Qgis.Warning)
-
-                                TOMsMessageLog.logMessage(
-                                    "In setFieldsForTOMsExportLayer: changing field type for {} from {} to {}".format(field.name(), field.type(), lookupField.type()),
-                                    level=Qgis.Warning)
+                    fieldType = self.getLookupFieldType(currFields.indexFromName(field.name()), relationsForCurrLayer)
+                    if fieldType:
+                        field.setType(fieldType)
+                        TOMsMessageLog.logMessage("Setting  {} to {}".format(field.name(), fieldType), level=Qgis.Warning)
                 status = newFields.append(field)
                 if status == False:
-                    TOMsMessageLog.logMessage("Error adding " + field.name(), level=Qgis.Info)
+                    TOMsMessageLog.logMessage("Error adding " + field.name(), level=Qgis.Warning)
 
         return newFields
+
+    def getLookupFieldType(self, idxField, relationsForCurrLayer):
+        # returns field details with datatype of lookup
+
+        fieldType = None
+
+        if len(relationsForCurrLayer) > 0:
+            # check to see if field has a lookup
+            for relation in relationsForCurrLayer:
+                if relation.referencingFields()[0] == idxField:
+                    TOMsMessageLog.logMessage(
+                        "In getLookupFieldType: checking field details for idx {} on {}".format(
+                            idxField, relation.referencingLayer().name()),
+                        level=Qgis.Warning)
+                    try:
+                        lookupField = relation.referencedLayer().fields().field("Description")  # this is the field that we will use for export
+                        # change data type for this field
+                        fieldType = lookupField.type()
+                    except KeyError as e:
+                        TOMsMessageLog.logMessage(
+                            "In setFieldsForTOMsExportLayer: lookup field error for {}: {}. {}".format(
+                                idxField, relation.referencedLayer().name(), e),
+                            level=Qgis.Warning)
+                        relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
+                        if len(relationsForReferencedLayer) == 1:  # only allow further check for simple (one field) relations
+                            fieldType = self.getLookupFieldType(relation.referencedFields()[0], relationsForReferencedLayer)
+
+                    break
+
+        return fieldType
 
     def prepareNewLayer(self, currLayer, newLayerName, geomWkbType, reqFields):
 
@@ -658,31 +675,41 @@ class TOMsExportUtils():
     def getLookupDescription(self, relation, currRestriction):
         # possibly recursive ...
 
-        TOMsMessageLog.logMessage(
-            "In getFieldValues. field: {}; {}.".format(field.name(), relation.referencingFields()[0]),
-            level=Qgis.Info)
+        TOMsMessageLog.logMessage("In getLookupDescription. Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
+            currRestriction.fields().field(relation.referencingFields()[0]).name(), \
+            currRestriction.attribute(relation.referencingFields()[0])), level=Qgis.Warning)
 
-        """attrs = relation.getReferencedFeature(currRestriction).attributes()
-        TOMsMessageLog.logMessage(
-            "In getFieldValues. lookup fields: {}".format(attrs),
-            level=Qgis.Info)"""
+        fieldValue = None
 
-        try:
-            fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
-        except KeyError as e:
-            TOMsMessageLog.logMessage(
-                "In getFieldValues: field Description not present for {}: {}".format(relation.referencedLayer().name(),
-                                                                                     e),
-                level=Qgis.Warning)
-            # check to see whether or not there are any further relations that might allow the lookup ...
-            relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
-            if len(relationsForReferencedLayer) == 1:  # only allow one further relation
-                fieldValue = getLookupDescription(relationsForReferencedLayer[0], currRestriction)
-            else:
-                fieldValue = None
-        # return relation.getReferencedFeature(currRestriction).attribute("Description")  # may need to a better way to lookup value
+        # check to see if the initial value is actually NULL
+
+        if currRestriction.attribute(relation.referencingFields()[0]) != NULL:
+
+            TOMsMessageLog.logMessage("Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                                                                      relation.referencedLayer().name()), level=Qgis.Warning)
+
+            try:
+                fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
+            except KeyError as e:
+
+                TOMsMessageLog.logMessage("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()), level=Qgis.Warning)
+
+                # check to see whether or not there are any further relations that might allow the lookup ...
+                relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
+
+                # need to choose the relation for the field we are considering ...
+                for newRelation in relationsForReferencedLayer:
+                    if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+
+                        checkRestriction = relation.getReferencedFeature(currRestriction)
+
+                        if len (checkRestriction.fields()) > 0:
+                            TOMsMessageLog.logMessage("In getLookupDescription: checking {}: {}".format(relation.referencedLayer().name(), \
+                                                                                                        relation.getReferencedFeature(currRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Warning)
+                            fieldValue = self.getLookupDescription(relationsForReferencedLayer[0], relation.getReferencedFeature(currRestriction))
 
         return fieldValue
+
 
 class checkableMapLayerListCtrl:
     """PyCalc Controller class."""

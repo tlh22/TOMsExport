@@ -103,7 +103,7 @@ for checkField in checkFieldList:
 
 
 
----
+###--- Used from here
 currLayer = QgsProject.instance().mapLayersByName("Bays")[0]
 selectedRestrictions = currLayer.selectedFeatures()
 currRestriction = selectedRestrictions[0]
@@ -136,22 +136,35 @@ def getRelationsForCurrLayer(currLayer):
 def getLookupDescription(relation, currRestriction):
     # possibly recursive ...
     attrs = relation.getReferencedFeature(currRestriction).attributes()
+    print ("In getLookupDescription. Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
+        currRestriction.fields().field(relation.referencingFields()[0]).name(), \
+        currRestriction.attribute(relation.referencingFields()[0])))
     fieldValue = None
-    try:
-        fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
-    except KeyError as e:
-        # check to see whether or not there are any further relations that might allow the lookup ...
-        relationsForReferencedLayer = getRelationsForCurrLayer(relation.referencedLayer())
-        if len(relationsForReferencedLayer) == 1:  # only allow one further relation
-            fieldValue = getLookupDescription(relationsForReferencedLayer[0], currRestriction)
-        else:
-            fieldValue = None
-    # return relation.getReferencedFeature(currRestriction).attribute("Description")  # may need to a better way to lookup value
+    # check to see if the initial value is actually NULL
+    if currRestriction.attribute(relation.referencingFields()[0]) != qgis.core.NULL:
+        print ("Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), relation.referencedLayer().name()))
+        try:
+            fieldValue = relation.getReferencedFeature(currRestriction).attribute("Description")
+        except KeyError as e:
+            print ("In getLookupDescription: error on {}. Checking next level ...".format(relation.referencedLayer().name()))
+            # check to see whether or not there are any further relations that might allow the lookup ...
+            relationsForReferencedLayer = getRelationsForCurrLayer(relation.referencedLayer())
+            # need to choose the relation for the field we are considering ...
+            for newRelation in relationsForReferencedLayer:
+                if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+                    #if len(relationsForReferencedLayer) == 1:  # only allow one further relation
+                    checkRestriction = relation.getReferencedFeature(currRestriction)
+                    if len (checkRestriction.fields()) > 0:
+                        print ("In getLookupDescription: checking {}: {}".format(relation.referencedLayer().name(), relation.getReferencedFeature(currRestriction).attribute(relation.referencedFields()[0])))
+                        fieldValue = getLookupDescription(relationsForReferencedLayer[0], relation.getReferencedFeature(currRestriction))
+        # return relation.getReferencedFeature(currRestriction).attribute("Description")  # may need to a better way to lookup value
     return fieldValue
 
 
-vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
 
+### use to show relations
+
+vectorLayers = getVectorLayers(QgsProject.instance().mapLayers())
 relations = QgsProject.instance().relationManager().discoverRelations([], vectorLayers)
 
 relationsForCurrLayer = []
@@ -165,7 +178,7 @@ for relation in relations:
         #relationsForCurrLayer.append(relation.referencingLayer(), relation.referencingFields()[0])
         relationsForCurrLayer.append(relation)
 
-
+### use to show values for feature
 for field in currRestriction.fields():
     fieldValue = currRestriction.attribute(field.name())
     for relation in relationsForCurrLayer:
@@ -173,3 +186,4 @@ for field in currRestriction.fields():
             fieldValue = getLookupDescription(relation, currRestriction)
             break
     print ("Field: {}, value: {}".format(field.name(), fieldValue))
+
