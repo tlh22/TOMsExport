@@ -551,8 +551,14 @@ class TOMsExportUtils():
                                 idxField, relation.referencedLayer().name(), e),
                             level=Qgis.Warning)
                         relationsForReferencedLayer = self.getRelationsForCurrLayer(relation.referencedLayer())
-                        if len(relationsForReferencedLayer) == 1:  # only allow further check for simple (one field) relations
-                            fieldType = self.getLookupFieldType(relation.referencedFields()[0], relationsForReferencedLayer)
+                        """if len(relationsForReferencedLayer) == 1:  # only allow further check for simple (one field) relations
+                            fieldType = self.getLookupFieldType(relation.referencedFields()[0], relationsForReferencedLayer)"""
+
+                        # need to choose the relation for the field we are considering ...
+                        for newRelation in relationsForReferencedLayer:
+                            if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
+                                fieldType = self.getLookupFieldType(newRelation.referencingFields()[0], relationsForReferencedLayer)
+                                break
 
                     break
 
@@ -675,7 +681,7 @@ class TOMsExportUtils():
     def getLookupDescription(self, relation, currRestriction):
         # possibly recursive ...
 
-        TOMsMessageLog.logMessage("In getLookupDescription. Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
+        TOMsMessageLog.logMessage("In getLookupDescription (1). Checking {} for field {}. current value: {}".format(relation.referencingLayer().name(), \
             currRestriction.fields().field(relation.referencingFields()[0]).name(), \
             currRestriction.attribute(relation.referencingFields()[0])), level=Qgis.Warning)
 
@@ -685,7 +691,7 @@ class TOMsExportUtils():
 
         if currRestriction.attribute(relation.referencingFields()[0]) != NULL:
 
-            TOMsMessageLog.logMessage("Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+            TOMsMessageLog.logMessage("In getLookupDescription (2). Checking {} in {} ... ".format(relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
                                                                       relation.referencedLayer().name()), level=Qgis.Warning)
 
             try:
@@ -703,10 +709,17 @@ class TOMsExportUtils():
 
                         checkRestriction = relation.getReferencedFeature(currRestriction)
 
+                        TOMsMessageLog.logMessage("In getLookupDescription (3). Found relation for {} in {} ... {} on {}".format(
+                            relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                            relation.referencedLayer().name(), \
+                            newRelation.getReferencedFeature(checkRestriction).fields().field(newRelation.referencedFields()[0]).name(), \
+                            newRelation.referencedLayer().name() \
+                            ), level=Qgis.Warning)
+
                         if len (checkRestriction.fields()) > 0:
-                            TOMsMessageLog.logMessage("In getLookupDescription: checking {}: {}".format(relation.referencedLayer().name(), \
-                                                                                                        relation.getReferencedFeature(currRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Warning)
-                            fieldValue = self.getLookupDescription(relationsForReferencedLayer[0], relation.getReferencedFeature(currRestriction))
+                            TOMsMessageLog.logMessage("In getLookupDescription (4): Checking {}: {}".format(newRelation.referencedLayer().name(), \
+                                                               newRelation.getReferencedFeature(checkRestriction).attribute(relation.referencedFields()[0])), level=Qgis.Warning)
+                            fieldValue = self.getLookupDescription(newRelation, checkRestriction)
 
         return fieldValue
 

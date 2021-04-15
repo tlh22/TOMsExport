@@ -154,9 +154,15 @@ def getLookupDescription(relation, currRestriction):
                 if newRelation.referencingFields()[0] == relation.referencedFields()[0]:
                     #if len(relationsForReferencedLayer) == 1:  # only allow one further relation
                     checkRestriction = relation.getReferencedFeature(currRestriction)
+                    print ("In getLookupDescription (3). Found relation for {} in {} ... {} on {}".format(
+                            relation.getReferencedFeature(currRestriction).fields().field(relation.referencedFields()[0]).name(), \
+                            relation.referencedLayer().name(), \
+                            newRelation.getReferencedFeature(checkRestriction).fields().field(newRelation.referencedFields()[0]).name(), \
+                            newRelation.referencedLayer().name() \
+                            ))
                     if len (checkRestriction.fields()) > 0:
                         print ("In getLookupDescription: checking {}: {}".format(relation.referencedLayer().name(), relation.getReferencedFeature(currRestriction).attribute(relation.referencedFields()[0])))
-                        fieldValue = getLookupDescription(relationsForReferencedLayer[0], relation.getReferencedFeature(currRestriction))
+                        fieldValue = getLookupDescription(newRelation, checkRestriction)
         # return relation.getReferencedFeature(currRestriction).attribute("Description")  # may need to a better way to lookup value
     return fieldValue
 
