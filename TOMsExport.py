@@ -244,7 +244,7 @@ class TOMsExport:
                                                   "ogr")
                         QgsProject.instance().addMapLayer(newLayerA)
 
-            TOMsMessageLog.logMessage("******** FINSIHED EXPORT ********", level=Qgis.Warning)
+            TOMsMessageLog.logMessage("******** FINISHED EXPORT ********", level=Qgis.Warning)
 
             #self.dlg.close()
 
