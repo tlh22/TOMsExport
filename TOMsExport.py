@@ -311,9 +311,9 @@ class TOMsExportUtils():
 
     def getOnlyCurrentFeatures(self):
         value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'GetOnlyCurrentFeatures')
-        if value == 'True':
-            return True
-        return False
+        if value:
+            return value
+        return None
 
     def exportBaysAsPolygons(self):
         value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'BaysAsPolygons')
@@ -527,9 +527,12 @@ class TOMsExportUtils():
         """ Loop through all the fields in currLayer and add as appropriate"""
         for field in currFields:
             if field.name() in reqFields:
+                TOMsMessageLog.logMessage("In setFieldsForTOMsExportLayer. Adding {} ... ".format(field.name()),
+                                          level=Qgis.Warning)
                 # Check whether or not this is a lookup field
                 if self.includeLookupValues:
-
+                    TOMsMessageLog.logMessage("In setFieldsForTOMsExportLayer. checking for lookups ... NrRelations: {}".format(len(relationsForCurrLayer)),
+                                              level=Qgis.Warning)
                     fieldType, lookupKeyFieldDict = self.getLookupFieldType(currFields.indexFromName(field.name()), relationsForCurrLayer)
 
                     if fieldType:
