@@ -244,7 +244,7 @@ class TOMsExport:
                                                   "ogr")
                         QgsProject.instance().addMapLayer(newLayerA)
 
-            TOMsMessageLog.logMessage("******** FINSIHED EXPORT ********", level=Qgis.Warning)
+            TOMsMessageLog.logMessage("******** FINISHED EXPORT ********", level=Qgis.Warning)
 
             #self.dlg.close()
 
@@ -311,9 +311,9 @@ class TOMsExportUtils():
 
     def getOnlyCurrentFeatures(self):
         value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'GetOnlyCurrentFeatures')
-        if value == 'True':
-            return True
-        return False
+        if value:
+            return value
+        return None
 
     def exportBaysAsPolygons(self):
         value = self.configFileObject.getTOMsConfigElement('TOMsExport', 'BaysAsPolygons')
@@ -358,9 +358,15 @@ class TOMsExportUtils():
         fieldsToInclude, lookupDetailsDict = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
 
         # decide whether or not to use only current restrictions.
-        if self.isThisTOMsLayerUsingCurrentFeatures(currLayer) == True:
-            text = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL'
-            exp = QgsExpression(text)
+        processDate = self.isThisTOMsLayerUsingCurrentFeatures(currLayer)
+        if processDate:
+            processDateFormatted = "'{dateString}'".format(dateString=processDate)
+            filterString = u'"OpenDate" \u003C\u003D to_date({dateChoosenFormatted}, \'dd-MM-yyyy\') AND (("CloseDate" \u003E to_date({dateChoosenFormatted}, \'dd-MM-yyyy\')  OR "CloseDate" IS NULL)'.format(
+                dateChoosenFormatted=processDateFormatted)
+
+            TOMsMessageLog.logMessage("In processLayer - filterString {}".format(filterString), level=Qgis.Warning)
+
+            exp = QgsExpression(filterString)
             request = QgsFeatureRequest(exp)
             restrictionIterator = currLayer.getFeatures(request)
         else:
@@ -467,8 +473,9 @@ class TOMsExportUtils():
         # Decide whether or not this is a TOMs layer.
         # Look for "OpenDate" and check whether or not there are values set
 
-        if self.getOnlyCurrentFeatures() == False:
-            return False
+        processDate = self.getOnlyCurrentFeatures()
+        if not processDate:
+            return None
 
         isTOMsLayer = False
         currFields = currLayer.fields()
@@ -483,7 +490,10 @@ class TOMsExportUtils():
                 if sumRelevantFeatures > 0:
                     isTOMsLayer = True
 
-        return isTOMsLayer
+        if isTOMsLayer:
+            return processDate
+
+        return None
 
     def getRestrictionGeometryWkbType(self, currRestriction, layerGeomWkbType):
         # decide geometry type required based on layer geometry and GeomShapeID
@@ -517,9 +527,12 @@ class TOMsExportUtils():
         """ Loop through all the fields in currLayer and add as appropriate"""
         for field in currFields:
             if field.name() in reqFields:
+                TOMsMessageLog.logMessage("In setFieldsForTOMsExportLayer. Adding {} ... ".format(field.name()),
+                                          level=Qgis.Warning)
                 # Check whether or not this is a lookup field
                 if self.includeLookupValues:
-
+                    TOMsMessageLog.logMessage("In setFieldsForTOMsExportLayer. checking for lookups ... NrRelations: {}".format(len(relationsForCurrLayer)),
+                                              level=Qgis.Warning)
                     fieldType, lookupKeyFieldDict = self.getLookupFieldType(currFields.indexFromName(field.name()), relationsForCurrLayer)
 
                     if fieldType:
