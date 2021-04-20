@@ -358,9 +358,15 @@ class TOMsExportUtils():
         fieldsToInclude, lookupDetailsDict = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
 
         # decide whether or not to use only current restrictions.
-        if self.isThisTOMsLayerUsingCurrentFeatures(currLayer) == True:
-            text = '"OpenDate" IS NOT NULL AND "CloseDate" IS NULL'
-            exp = QgsExpression(text)
+        processDate = self.isThisTOMsLayerUsingCurrentFeatures(currLayer)
+        if processDate:
+            processDateFormatted = "'{dateString}'".format(dateString=processDate)
+            filterString = u'"OpenDate" \u003C\u003D to_date({dateChoosenFormatted}, \'dd-MM-yyyy\') AND (("CloseDate" \u003E to_date({dateChoosenFormatted}, \'dd-MM-yyyy\')  OR "CloseDate" IS NULL)'.format(
+                dateChoosenFormatted=processDateFormatted)
+
+            TOMsMessageLog.logMessage("In processLayer - filterString {}".format(filterString), level=Qgis.Warning)
+
+            exp = QgsExpression(filterString)
             request = QgsFeatureRequest(exp)
             restrictionIterator = currLayer.getFeatures(request)
         else:
@@ -467,8 +473,9 @@ class TOMsExportUtils():
         # Decide whether or not this is a TOMs layer.
         # Look for "OpenDate" and check whether or not there are values set
 
-        if self.getOnlyCurrentFeatures() == False:
-            return False
+        processDate = self.getOnlyCurrentFeatures()
+        if not processDate:
+            return None
 
         isTOMsLayer = False
         currFields = currLayer.fields()
@@ -483,7 +490,10 @@ class TOMsExportUtils():
                 if sumRelevantFeatures > 0:
                     isTOMsLayer = True
 
-        return isTOMsLayer
+        if isTOMsLayer:
+            return processDate
+
+        return None
 
     def getRestrictionGeometryWkbType(self, currRestriction, layerGeomWkbType):
         # decide geometry type required based on layer geometry and GeomShapeID
