@@ -175,6 +175,8 @@ relations = QgsProject.instance().relationManager().discoverRelations([], vector
 
 relationsForCurrLayer = []
 for relation in relations:
+    print ("referencinglayer: {}, referencedlayer: {}".format(relation.referencingLayer(), relation.referencedLayer()))
+
     if relation.referencingLayer() == currLayer:
         print ("************** layer: {}".format(currLayer.name()))
         #print ("referencinglayer: {}, referencingfields: {} resolve: {}".format(relation.referencingLayer(), relation.referencingFields(), relation.resolveReferencingField(relation.referencingFields()[0])))
@@ -193,3 +195,17 @@ for field in currRestriction.fields():
             break
     print ("Field: {}, value: {}".format(field.name(), fieldValue))
 
+
+## test for current features
+currLayer = QgsProject.instance().mapLayersByName("Bays")[0]
+processDate = '31-03-2021'
+
+filterString = '"OpenDate" <= to_date(\'{processDate}\', \'dd-MM-yyyy\') AND ("CloseDate" > to_date(\'{processDate}\', \'dd-MM-yyyy\') OR "CloseDate" IS NULL)'.format(processDate=processDate)
+
+exp = QgsExpression(filterString)
+request = QgsFeatureRequest(exp)
+restrictionIterator = currLayer.getFeatures(request)
+
+for currRestriction in restrictionIterator:
+    print ('GeomID: {}; {}'.format(currRestriction.attribute("GeometryID"), currRestriction.attribute("OpenDate")))
+    break
