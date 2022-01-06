@@ -344,7 +344,7 @@ class TOMsExportUtils():
 
     def processLayer(self, currLayer):
 
-        TOMsMessageLog.logMessage("In processLayer - Considering layer: ".format(currLayer.name()), level=Qgis.Warning)
+        TOMsMessageLog.logMessage("In processLayer - Considering layer: {}".format(currLayer.name()), level=Qgis.Warning)
 
         # get the fields to include
         listFieldsToInclude = self.getFieldsForExportLayer(currLayer.name())
@@ -360,10 +360,8 @@ class TOMsExportUtils():
         # decide whether or not to use only current restrictions.
         processDate = self.isThisTOMsLayerUsingCurrentFeatures(currLayer)
         if processDate:
-            processDateFormatted = "'{dateString}'".format(dateString=processDate)
-            filterString = u'"OpenDate" \u003C\u003D to_date({dateChoosenFormatted}, \'dd-MM-yyyy\') AND (("CloseDate" \u003E to_date({dateChoosenFormatted}, \'dd-MM-yyyy\')  OR "CloseDate" IS NULL)'.format(
-                dateChoosenFormatted=processDateFormatted)
-
+            filterString = '"OpenDate" <= to_date(\'{processDate}\', \'dd-MM-yyyy\') AND ("CloseDate" > to_date(\'{processDate}\', \'dd-MM-yyyy\') OR "CloseDate" IS NULL)'.format(
+                processDate=processDate)
             TOMsMessageLog.logMessage("In processLayer - filterString {}".format(filterString), level=Qgis.Warning)
 
             exp = QgsExpression(filterString)
