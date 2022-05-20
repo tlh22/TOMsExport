@@ -358,7 +358,7 @@ class TOMsExportUtils():
         fieldsToInclude, lookupDetailsDict = self.setFieldsForTOMsExportLayer(currLayer, listFieldsToInclude)
 
         # decide whether or not to use only current restrictions.
-        processDate = self.isThisTOMsLayerUsingCurrentFeatures(currLayer)
+        processDate = self.isThisTOMsLayerUsingCurrentFeatures(currLayer)    # TODO: it would be good to get this from the dialog
         if processDate:
             filterString = '"OpenDate" <= to_date(\'{processDate}\', \'dd-MM-yyyy\') AND ("CloseDate" > to_date(\'{processDate}\', \'dd-MM-yyyy\') OR "CloseDate" IS NULL)'.format(
                 processDate=processDate)
